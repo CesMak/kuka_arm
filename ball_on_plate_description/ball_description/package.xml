@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>ball_description</name>
+  <version>0.1.0</version>
+  <description>Simple Ball</description>
+  <author>Markus Lamprecht</author>
+  <maintainer email="MarkusLamprecht@live.de">Markus Lamprecht</maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <test_depend>roslaunch</test_depend>
+
+  <exec_depend>joint_state_publisher</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>rviz</exec_depend>
+  <exec_depend>xacro</exec_depend>
+
+  <export>
+<!--    <architecture_independent/>-->
+  </export>
+</package>

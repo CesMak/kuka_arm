@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+
+<sdf version="1.4">
+  <!-- We use a custom world for the robotis mannipulatorH so that the camera angle is launched correctly -->
+  <world name="default">
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
+
+<!-- default settings for ode:
+<physics type='ode'>
+  <max_step_size>0.001</max_step_size>
+  <real_time_factor>1</real_time_factor>
+  <real_time_update_rate>1000</real_time_update_rate>
+  <gravity>0 0 -9.8</gravity>
+</physics>
+
+-->
+
+    <!-- Global light source -->
+    <include>
+      <uri>model://sun</uri>
+    </include>
+
+    <!-- Focus camera on tall pendulum -->
+    <gui fullscreen='0'>
+      <camera name='user_camera'>
+	      <pose> 2.0 -2.0 1.2 0.0 0.275643 2.356190 </pose>	  
+	      <view_controller>orbit</view_controller>
+      </camera>
+    </gui>
+  </world>
+</sdf>
