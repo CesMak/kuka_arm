@@ -21,6 +21,7 @@
          <mechanicalReduction>1</mechanicalReduction>
       </actuator>
    </transmission>
+
    <transmission name="tran2">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="joint_a2">

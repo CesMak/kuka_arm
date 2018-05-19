@@ -1,0 +1,10 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: kr5_description
+    relative_path: urdf/ur5_robot.urdf.xacro
+  SRDF:
+    relative_path: config/manipulator.srdf
+  CONFIG:
+    author_name: Markus Lamprecht
+    author_email: markuslamprecht@live.de
+    generated_timestamp: 1526754274

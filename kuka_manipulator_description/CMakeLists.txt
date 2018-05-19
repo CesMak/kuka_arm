@@ -11,5 +11,6 @@ catkin_package()
 #  roslaunch_add_file_check(test/roslaunch_test.xml)
 #endif()
 
-#install(DIRECTORY config launch meshes urdf
-#  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+install(DIRECTORY launch DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+install(DIRECTORY urdf DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+install(DIRECTORY meshes DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
