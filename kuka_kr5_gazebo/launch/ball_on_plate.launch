@@ -111,30 +111,3 @@
 </group>
 
 </launch>
-
-
-<!--/manipulator/joint_states
-/manipulator/link_1_controller/command
-/manipulator/link_1_controller/pid/parameter_descriptions
-/manipulator/link_1_controller/pid/parameter_updates
-/manipulator/link_1_controller/state
-/manipulator/link_2_controller/command
-/manipulator/link_2_controller/pid/parameter_descriptions
-/manipulator/link_2_controller/pid/parameter_updates
-/manipulator/link_2_controller/state
-/manipulator/link_3_controller/command
-/manipulator/link_3_controller/pid/parameter_descriptions
-/manipulator/link_3_controller/pid/parameter_updates
-/manipulator/link_3_controller/state
-
-
-[ INFO] [1524815809.056663229, 0.195000000]: Loaded gazebo_ros_control.
-[INFO] [WallTime: 1524815809.162949] [0.300000] Controller Spawner: Waiting for service controller_manager/switch_controller
-[INFO] [WallTime: 1524815809.168647] [0.306000] Controller Spawner: Waiting for service controller_manager/unload_controller
-[INFO] [WallTime: 1524815809.176408] [0.314000] Loading controller: link_1_controller
-[INFO] [WallTime: 1524815809.328424] [0.466000] Loading controller: link_2_controller
-[INFO] [WallTime: 1524815809.488049] [0.626000] Loading controller: link_3_controller
-[INFO] [WallTime: 1524815809.645063] [0.783000] Loading controller: joint_state_controller
-[INFO] [WallTime: 1524815809.659244] [0.797000] Controller Spawner: Loaded controllers: link_1_controller, link_2_controller, link_3_controller, joint_state_controller
-[INFO] [WallTime: 1524815809.667125] [0.805000] Started controllers: link_1_controller, link_2_controller, link_3_controller, joint_state_controller-->
-

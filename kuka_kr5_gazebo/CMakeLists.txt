@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(ball_on_plate_gazebo)
+project(kuka_kr5_gazebo)
 
 ## Add support for C++11, supported in ROS Kinetic and newer
 # add_definitions(-std=c++11)
