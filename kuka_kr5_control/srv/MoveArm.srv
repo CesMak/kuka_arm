@@ -1,0 +1,4 @@
+std_msgs/Float64[3] desired_xyz
+std_msgs/Float64    duration
+---
+std_msgs/String success

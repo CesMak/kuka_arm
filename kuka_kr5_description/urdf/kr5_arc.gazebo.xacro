@@ -20,10 +20,10 @@
  <transmission name="joint_a1_transmission">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="joint_a1">
-       <hardwareInterface>EffortJointInterface</hardwareInterface>
+       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
     <actuator name="joint_a1_actuator">
-       <hardwareInterface>hardwareInterface/EffortJointInterface</hardwareInterface>
+       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
        <mechanicalReduction>1</mechanicalReduction>
     </actuator>
  </transmission>
@@ -31,10 +31,10 @@
 <transmission name="joint_a2_transmission">
    <type>transmission_interface/SimpleTransmission</type>
    <joint name="joint_a2">
-      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
    </joint>
    <actuator name="joint_a2_actuator">
-      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       <mechanicalReduction>1</mechanicalReduction>
    </actuator>
 </transmission>
@@ -42,10 +42,10 @@
 <transmission name="joint_a3_transmission">
    <type>transmission_interface/SimpleTransmission</type>
    <joint name="joint_a3">
-      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
    </joint>
    <actuator name="joint_a3_actuator">
-      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       <mechanicalReduction>1</mechanicalReduction>
    </actuator>
 </transmission>

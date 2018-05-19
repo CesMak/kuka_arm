@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package>
-  <name>kuka_kr5_gazebo</name>
+  <name>kuka_kr5_control</name>
   <version>0.0.0</version>
   <description>The kuka_kr5 simulation gazebo package</description>
 
@@ -49,8 +49,14 @@
   <build_depend>rospy</build_depend>
   <build_depend>std_msgs</build_depend>
   <build_depend>gazebo_ros</build_depend>
+  <build_depend>controller_manager</build_depend>
+  <build_depend>ros_control</build_depend>
+  <build_depend>ros_controllers</build_depend>
 
   <run_depend>gazebo_ros</run_depend>
+  <run_depend>controller_manager</run_depend>
+  <run_depend>ros_control</run_depend>
+  <run_depend>ros_controllers</run_depend>
   <run_depend>roscpp</run_depend>
   <run_depend>rospy</run_depend>
   <run_depend>std_msgs</run_depend>

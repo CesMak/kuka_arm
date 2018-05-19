@@ -4,7 +4,7 @@
    <arg name="robot_name" default="kuka" />
 
   <!-- Load robot description to parameter server -->
-  <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find kuka_kr5_description)/urdf/kr5_arc.xacro'
+  <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find kuka_kr5_description)/urdf/kr5.xacro'
      robot_name:=$(arg robot_name)"
      />
 </launch>

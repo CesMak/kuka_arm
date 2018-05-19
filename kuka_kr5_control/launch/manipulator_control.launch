@@ -1,0 +1,26 @@
+<!-- -*- mode: XML -*- -->
+<launch>
+   <arg name="robot_name" default="kuka" />
+
+  <!-- Load joint controller configurations from YAML file to parameter server -->
+  <rosparam file="$(find kuka_kr5_control)/config/manipulator_control.yaml" command="load" ns="$(arg robot_name)"/>
+
+  <!-- load the controllers -->
+  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+        output="screen" ns="/$(arg robot_name)" args="link_1_controller
+                                               link_2_controller
+					       link_3_controller
+                                               link_4_controller
+                                               link_5_controller
+                                               link_6_controller
+					       joint_state_controller 
+					       "/>
+
+
+<!-- convert joint states to TF transforms for rviz, etc  -->
+<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
+      respawn="false" output="screen">
+  <remap from="/joint_states" to="/$(arg robot_name)/joint_states"/>
+</node>
+
+</launch>

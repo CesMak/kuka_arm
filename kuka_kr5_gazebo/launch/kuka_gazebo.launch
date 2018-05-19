@@ -1,37 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <launch>
+   <!-- args: -->
+   <arg name="robot_name" default="kuka"/>
+   <arg name="robot_x_pos" default="0"/>
+   <arg name="robot_y_pos" default="0"/>
+   <arg name="robot_z_pos" default="0"/>
+
+
    <!-- use additional tools: -->
    <arg name="start_rviz" default="False"/>
-   <arg name="start_rqt_multiplot" default="False"/>
    <arg name="start_plotjuggler" default="False"/>
    <arg name="start_rqt_gui" default="False"/>
 
-   <!-- choose sensors to be used: -->
-   <arg name="use_realsense" default="False"/>
-   <arg name="use_laser" default="False"/>
-
-   <arg name="robot_name" default="kuka" />
-   <arg name="ball_name" default="ball" />
-   <arg name="use_the_ball" default="True" />
-
-   <!-- not used yet: -->
-   <arg name="motors_controller_type" default="EffortJointInterface" />    <!-- PositionJointInterface, VelocityJointInterface, EffortJointInterface -->
-   <arg name="control_period" default="0.001" /> <!-- 0.01 = 100Hz controller messages(joint) come all ... secs. should be same as update period?!-->
-   <arg name="ground_truth" default="True" />
-
-   <!--  Robots start position:-->
-   <arg name="robot_x_pos" default="0.0" />
-   <arg name="robot_y_pos" default="0.0" />
-   <arg name="robot_z_pos" default="0.0" />
-
-   <!--  Ball start position:-->
-   <arg name="ball_x_pos" default="1.0" />
-   <arg name="ball_y_pos" default="1.0" />
-   <arg name="ball_z_pos" default="1.0" />
-
    <!-- start Gazebo -->
    <include file="$(find gazebo_ros)/launch/empty_world.launch">
-      <arg name="world_name" value="$(find ball_on_plate_gazebo)/worlds/empty.world" />
+      <arg name="world_name" value="$(find kuka_kr5_gazebo)/worlds/empty.world" />
       <arg name="paused" value="True" />
       <arg name="use_sim_time" value="True" /> <!-- Tells ROS nodes asking for time to get the Gazebo-published simulation time, published over the ROS topic /clock (default true) -->
       <arg name="gui" value="True" />
@@ -45,7 +28,7 @@
    <group ns="$(arg robot_name)">
 
       <!-- load robot_description (kuka with plate) -->
-      <include file="$(find kuka_kr5_description)/launch/load_kr5_arc.launch">
+      <include file="$(find kuka_manipulator_description)/launch/load_kr5.launch">
          <arg name="robot_name" value="$(arg robot_name)" />
       </include>
 
@@ -56,7 +39,7 @@
       <!-- load controllers -->
       <group ns="joints"> </group>
 
-      <include file="$(find ball_on_plate_gazebo)/launch/start_joint_state_controller.launch">
+      <include file="$(find kuka_kr5_control)/launch/start_joint_state_controller.launch">
                  <arg name="publish_rate" value="100"/>
        </include>
 
@@ -73,20 +56,6 @@
       <param name="child_frame_id" type="string" value="footprint" />
     </node>
 
-   <!-- load ball description: -->
-   <group ns="$(arg ball_name)" if="$(arg use_the_ball)">
-      <include file="$(find ball_description)/launch/load_ball.launch">
-         <arg name="ball_name" value="$(arg ball_name)" />
-      </include>
-   <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-urdf -model $(arg ball_name) -param robot_description -x $(arg ball_x_pos) -y $(arg ball_y_pos) -z $(arg ball_z_pos)" />
-  </group>
-
-    <!-- transform ground truth pose to tf -> for world transformation FOR THE BALL required for rviz tf
-    <node name="odom_to_tf_ball" pkg="message_to_tf" type="message_to_tf">
-      <param name="odometry_topic" type="string" value="/gazebo/$(arg ball_name)/odom" />
-      <param name="child_frame_id" type="string" value="ball_link" />
-    </node> -->
-
 <!-- start our controller: for the ballbot: or the drive controller
 <include file="$(find bb_control)/launch/start_control_node.launch">
   <arg name="controller_type" value="$(arg controller_type)" />
@@ -95,11 +64,7 @@
 
 <!-- start additional tool's: -->
 <group if="$(arg start_rviz)">
-  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find ball_on_plate_gazebo)/config/model.rviz"  required="true"/>
-</group>
-
-<group if="$(arg start_rqt_multiplot)">
-  <node pkg="rqt_multiplot" type="rqt_multiplot" name="rqt_multiplot" args=""/>
+  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find kuka_kr5_gazebo)/config/model.rviz"  required="true"/>
 </group>
 
 <group if="$(arg start_plotjuggler)"> <!--  -l $(find ballbot_description)/rviz/plot_juggler_layout.xml -->
@@ -107,7 +72,7 @@
 </group>
 
 <group if="$(arg start_rqt_gui)">   <!-- start rqt: rosrun rqt_gui rqt_gui   if starts to fast just click blue refresh button! -->
-  <node name="ballbot_rqt" pkg="rqt_gui" type="rqt_gui" respawn="false" output="screen" args="-perspective-file $(find ballbot_description)/rviz/bb_rqt.perspective"/>
+  <node name="ballbot_rqt" pkg="rqt_gui" type="rqt_gui" respawn="false" output="screen" args="-perspective-file $(find kuka_kr5_gazebo)/config/bb_rqt.perspective"/>
 </group>
 
 </launch>

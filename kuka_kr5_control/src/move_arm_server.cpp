@@ -1,7 +1,7 @@
 #include "ros/ros.h"
 #include "ros/time.h"
 #include "std_msgs/Float64.h"
-#include "ball_on_plate_gazebo/MoveArm.h"
+#include "kuka_kr5_control/MoveArm.h"
 #include "sensor_msgs/JointState.h"
 #include "math.h"
 #include "geometry_msgs/Point.h"
@@ -222,8 +222,8 @@ void init_end_effector_pose()
 
 }
 
-bool move_arm(manipulator_gazebo::MoveArm::Request  &req,
-              manipulator_gazebo::MoveArm::Response &res)
+bool move_arm(kuka_kr5_control::MoveArm::Request  &req,
+              kuka_kr5_control::MoveArm::Response &res)
 {
   double cartezian_trajectory[3][N];
   double joint_trajectory[3][N];

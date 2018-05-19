@@ -35,6 +35,7 @@
         </geometry>
       </collision>
     </link>
+
     <!-- link 1 (A1) -->
     <link name="${prefix}link_1">
       <inertial>
@@ -64,6 +65,7 @@
         </geometry>
       </collision>
     </link>
+
     <!-- link 2 -->
     <link name="${prefix}link_2">
       <inertial>
@@ -93,6 +95,7 @@
         </geometry>
       </collision>
     </link>
+
     <!-- link 3 -->
     <link name="${prefix}link_3">
       <inertial>
@@ -212,6 +215,7 @@
         </geometry>
       </collision>
     </link>
+
     <!-- tool link -->
     <!-- This frame corresponds to the $FLANGE coordinate system in KUKA KRC controllers. -->
 
@@ -312,8 +316,8 @@
     <link name="${prefix}footprint" />
     <joint name="${prefix}base_link-base" type="fixed">
       <origin xyz="0 0 0" rpy="0 0 0" />
-      <parent link="${prefix}base_link" />
-      <child link="${prefix}footprint" />
+      <parent link="${prefix}footprint" />
+      <child link="${prefix}base_link" />
     </joint>
   </xacro:macro>
 
