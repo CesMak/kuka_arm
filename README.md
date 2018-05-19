@@ -33,7 +33,7 @@ If that does not work for some reason try:
 ![kuka_description of robot](https://github.com/CesMak/kuka_arm/blob/master/doc/kuka_arm_rviz.png)
 
 ## Moveit
-
+* (TODO) Connect Gazebo Simulation to MoveIt
 
 # Visualize in Gazebo
 ```
@@ -63,3 +63,4 @@ Also in terms of licenses etc. please refer to the above website.
 # Links to other ROS-arm-manipulators:
 * https://github.com/sinaiaranda-CIDESI/motoman_mh6-10
 * https://github.com/orsalmon/kuka_manipulator_gazebo
+* Connect Robot to MoveIt: https://www.youtube.com/watch?v=j6bBxfD_bYs&t=638s
