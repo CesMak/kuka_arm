@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<launch>
+
+<arg name="robot_name" default="manipulator" />
+
+<!-- Load robot description to parameter server -->
+<param name="robot_description" command="$(find xacro)/xacro --inorder '$(find kr5_description)/urdf/kr5_robot.urdf.xacro'
+  robot_name:=$(arg robot_name)"
+  />
+
+
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+    <param name="use_gui" value="true" />
+  </node>
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find kr5_description)/config/robot_state_visualize.rviz" required="true" />
+</launch>
+
+
+<!--
+
+gives these topics:
+/clicked_point
+/display_robot_state
+/initialpose
+/joint_states
+/move_base_simple/goal
+/rosout
+/rosout_agg
+/tf
+/tf_static-->

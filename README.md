@@ -20,25 +20,28 @@ sudo apt-get install ros-kinetic-gazebo-ros-control
 
 # Bring up in RVIZ and change joints
 ```
-	roslaunch kuka_manipulator_description test_kr5.launch 
+roslaunch kr5_description start_kr5_description_rviz.launch
 ```
-
-If that does not work for some reason try:
-
-```
-	roslaunch kuka_kr5_description test_kr5_arc.launch 
-```
-
 
 ![kuka_description of robot](https://github.com/CesMak/kuka_arm/blob/master/doc/kuka_arm_rviz.png)
 
 ## Moveit
-* (TODO) Connect Gazebo Simulation to MoveIt
+* Connect Gazebo Simulation to MoveIt
+
+```
+roslaunch kuka_kr5_gazebo rviz_connected_with_gz_using_moveit.launch
+```
+
+![rviz-moveit-gazebo](https://github.com/CesMak/kuka_arm/blob/master/doc/moveit.png)
 
 # Visualize in Gazebo
+* TODO: use also kr5_description for it and finally be able to delete kuka_manipulator_description
+
 ```
-	roslaunch kuka_kr5_gazebo kuka_gazebo.launch 
+roslaunch kuka_kr5_gazebo gz_connected_with_rviz.launch
 ```
+
+(start by clicking the start simulation button in gazebo!)
 
 ![kuka_arm gazebo](https://github.com/CesMak/kuka_arm/blob/master/doc/gz_kr5.png)
 
@@ -46,7 +49,7 @@ If that does not work for some reason try:
 ## Send a command to gazebo
 
 ```
-	rostopic pub /kuka/link_1_controller/command std_msgs/Float64 "data: 1.0" 
+rostopic pub /kuka/link_1_controller/command std_msgs/Float64 "data: 0.5"
 ```
 
 # Sources

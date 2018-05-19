@@ -9,11 +9,11 @@
     <!--JOINTS: When a joint is specified, the child link of that joint (which will always exist) is automatically included-->
     <!--CHAINS: When a chain is specified, all the links along the chain (including endpoints) are included in the group. Additionally, all the joints that are parents to included links are also included. This means that joints along the chain and the parent joint of the base link are included in the group-->
     <!--SUBGROUPS: Groups can also be formed by referencing to already defined group names-->
-    <group name="kr5_group">
-        <chain base_link="world" tip_link="ee_link" />
+    <group name="kr5_planning_group">
+        <chain base_link="base_link" tip_link="ee_link" />
     </group>
     <!--GROUP STATES: Purpose: Define a named state for a particular group, in terms of joint values. This is useful to define states like 'folded arms'-->
-    <group_state name="all_zero" group="kr5_group">
+    <group_state name="all_zero" group="kr5_planning_group">
         <joint name="joint_a1" value="0" />
         <joint name="joint_a2" value="0" />
         <joint name="joint_a3" value="0" />
@@ -21,21 +21,29 @@
         <joint name="joint_a5" value="0" />
         <joint name="joint_a6" value="0" />
     </group_state>
-    <group_state name="tool_to_top" group="kr5_group">
-        <joint name="joint_a1" value="0.0595" />
-        <joint name="joint_a2" value="-2.7" />
-        <joint name="joint_a3" value="1.1318" />
-        <joint name="joint_a4" value="-0.7384" />
-        <joint name="joint_a5" value="0" />
-        <joint name="joint_a6" value="-0.6041" />
-    </group_state>
-    <group_state name="max_top" group="kr5_group">
-        <joint name="joint_a1" value="0.0892" />
-        <joint name="joint_a2" value="-1.591" />
+    <group_state name="max_top" group="kr5_planning_group">
+        <joint name="joint_a1" value="0" />
+        <joint name="joint_a2" value="-1.5914" />
         <joint name="joint_a3" value="0" />
         <joint name="joint_a4" value="0" />
         <joint name="joint_a5" value="0" />
-        <joint name="joint_a6" value="-0.6041" />
+        <joint name="joint_a6" value="0" />
+    </group_state>
+    <group_state name="min_top" group="kr5_planning_group">
+        <joint name="joint_a1" value="0" />
+        <joint name="joint_a2" value="-2.9535" />
+        <joint name="joint_a3" value="1.3807" />
+        <joint name="joint_a4" value="0" />
+        <joint name="joint_a5" value="0" />
+        <joint name="joint_a6" value="0" />
+    </group_state>
+    <group_state name="freaky" group="kr5_planning_group">
+        <joint name="joint_a1" value="-1.0107" />
+        <joint name="joint_a2" value="-2.6011" />
+        <joint name="joint_a3" value="0.6341" />
+        <joint name="joint_a4" value="-2.5508" />
+        <joint name="joint_a5" value="-0.8228" />
+        <joint name="joint_a6" value="-1.8796" />
     </group_state>
     <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
     <virtual_joint name="FixedBase" type="fixed" parent_frame="world" child_link="world" />

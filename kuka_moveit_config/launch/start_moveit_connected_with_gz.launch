@@ -11,7 +11,6 @@
            <rosparam param="/source_list">[/joint_states]</rosparam> <!-- see rostopic list -->
         </node>
 
-
         <include file="$(find kuka_moveit_config)/launch/move_group.launch">
                 <arg name="publish_monitored_planning_scene" value="true" />
         </include>

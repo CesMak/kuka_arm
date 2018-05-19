@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<launch>
+<arg name="robot_name" default="kr5" />
+
+<!-- these are the arguments you can pass this launch file, for example paused:=true -->
+<arg name="paused" default="true"/>
+<arg name="use_sim_time" default="true"/>
+<arg name="gui" default="true"/>
+<arg name="headless" default="false"/>
+<arg name="debug" default="false"/>
+
+<!-- We resume the logic in empty_world.launch -->
+<include file="$(find gazebo_ros)/launch/empty_world.launch">
+  <arg name="debug" value="$(arg debug)" />
+  <arg name="gui" value="$(arg gui)" />
+  <arg name="paused" value="$(arg paused)"/>
+  <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+  <arg name="headless" value="$(arg headless)"/>
+</include>
+
+<!-- Load the URDF into the ROS Parameter Server -->
+<include file="$(find kuka_manipulator_description)/launch/load_kr5.launch" />
+
+<!--<include file="$(find kr5_description)/launch/kr5_upload.launch">
+   <arg name="robot_name" value="$(arg robot_name)" />
+</include>-->
+
+<!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
+<node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+      args="-urdf -model manipulator -param robot_description -x 0.2 -y 0.2 -z 0.0"/>
+
+<!-- ros_control KUKA launch file  -->
+<include file="$(find kuka_kr5_control)/launch/manipulator_control.launch" />
+
+</launch>
+
+
