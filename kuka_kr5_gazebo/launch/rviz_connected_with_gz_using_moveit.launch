@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <launch>
-  <arg name="robot_name" default="kr5" />
+  <arg name="robot_name" default="kuka" />
+  <arg name="use_ros_control" default="False" />
 
   <!-- these are the arguments you can pass this launch file, for example paused:=true -->
   <arg name="paused" default="false"/>
@@ -21,6 +22,7 @@
   <!-- Load the URDF into the ROS Parameter Server -->
   <include file="$(find kr5_description)/launch/kr5_upload.launch">
      <arg name="robot_name" value="$(arg robot_name)" />
+     <arg name="use_ros_control" value="$(arg use_ros_control)" />
   </include>
 
   <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
@@ -33,8 +35,6 @@
   <node name="arm_controller_spawner" pkg="controller_manager" type="controller_manager" args="spawn arm_controller" respawn="false" output="screen"/>
 
   <!-- start moveit: -->
-  <include file="$(find kuka_moveit_config)/launch/start_moveit_connected_with_gz.launch">
-</include>
-
+  <include file="$(find kuka_moveit_config)/launch/start_moveit_connected_with_gz.launch" />
 
 </launch>

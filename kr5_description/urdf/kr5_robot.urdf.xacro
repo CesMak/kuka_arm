@@ -2,13 +2,13 @@
 <robot xmlns:xacro="http://ros.org/wiki/xacro"
        name="$(arg robot_name)">>
 
-  <!-- common stuff -->
+  <!-- common stuff // load kr_arm_gazebo macro -->
   <xacro:include filename="$(find kr5_description)/urdf/common.gazebo.xacro" />
 
-  <!-- ur5 -->
+  <!-- load kr5_robot macro  -->
   <xacro:include filename="$(find kr5_description)/urdf/kr5.urdf.xacro" />
 
-  <!-- arm -->
+  <!-- execute macro -->
   <xacro:kr5_robot prefix=""/>
 
   <link name="world" />

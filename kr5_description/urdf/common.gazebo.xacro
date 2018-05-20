@@ -1,20 +1,35 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
 
+  <xacro:arg name="use_ros_control" default="False" />
+  <xacro:arg name="control_period" default="0.001" />
+  <xacro:arg name="motors_controller_type" default="PositionJointInterface" /> <!-- PositionJointInterface VelocityJointInterface  EffortJointInterface-->
+  <xacro:arg name="use_the_plate" default="True" />
+
   <gazebo>
-    <plugin name="ros_control" filename="libgazebo_ros_control.so">
 
-    </plugin>
+    <xacro:unless value="$(arg use_ros_control)">
+      <plugin name="ros_control" filename="libgazebo_ros_control.so">
+      </plugin>
+    </xacro:unless>
 
-<!-- controllers: -->
-   <!--Plugin loads hardware interfaces and controller manager
-   <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
-      <robotNamespace>/$(arg robot_name)/joints</robotNamespace>
-      <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
-      <controlPeriod>0.001</controlPeriod>
+  <xacro:if value="$(arg use_ros_control)">
+  <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+     <robotNamespace>/$(arg robot_name)</robotNamespace>
+     <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+     <controlPeriod>$(arg control_period)</controlPeriod>
+  </plugin>
+
+
+<!--<gazebo>
+   <plugin name="ground_truth" filename="libgazebo_ros_p3d.so">
+      <frameName>world</frameName>
+      <bodyName>base_link</bodyName>
+      <topicName>/gazebo/$(arg robot_name)/odom</topicName>
+      <updateRate>100.0</updateRate>
    </plugin>
--->
-
+</gazebo>-->
+  </xacro:if>
 <!--
     <plugin name="gazebo_ros_power_monitor_controller" filename="libgazebo_ros_power_monitor.so">
       <alwaysOn>true</alwaysOn>

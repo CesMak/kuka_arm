@@ -35,18 +35,18 @@ roslaunch kuka_kr5_gazebo rviz_connected_with_gz_using_moveit.launch
 ![rviz-moveit-gazebo](https://github.com/CesMak/kuka_arm/blob/master/doc/moveit.png)
 
 # Visualize in Gazebo
-* TODO: use also kr5_description for it and finally be able to delete kuka_manipulator_description
+* This file is using the ros_control package and uses Position controllers
+* TODO: control a continuous law with position controllers (write a node about that)
 
 ```
 roslaunch kuka_kr5_gazebo gz_connected_with_rviz.launch
 ```
 
-(start by clicking the start simulation button in gazebo!)
-
 ![kuka_arm gazebo](https://github.com/CesMak/kuka_arm/blob/master/doc/gz_kr5.png)
 
 
 ## Send a command to gazebo
+(start by clicking the start simulation button in gazebo!)
 
 ```
 rostopic pub /kuka/link_1_controller/command std_msgs/Float64 "data: 0.5"

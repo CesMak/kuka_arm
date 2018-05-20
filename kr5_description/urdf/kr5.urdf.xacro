@@ -5,23 +5,10 @@
        xmlns:xacro="http://ros.org/wiki/xacro">
 
 
-  <!-- currently not used within moveit -->
-  <xacro:arg name="motors_controller_type" default="PositionJointInterface" /> <!-- PositionJointInterface VelocityJointInterface  EffortJointInterface-->
-  <xacro:arg name="control_period" default="0.001" />
-
-  <xacro:arg name="use_the_plate" default="True" />
-
-
   <xacro:include filename="$(find kr5_description)/urdf/kr.transmission.xacro" />
   <xacro:include filename="$(find kr5_description)/urdf/kr.gazebo.xacro" />
 
   <!-- effort values can be found here: https://github.com/ros-industrial/universal_robot/issues/32-->
-  <xacro:property name="joint_effort_limit_1" value="150" />
-  <xacro:property name="joint_effort_limit_2" value="150" />
-  <xacro:property name="joint_effort_limit_3" value="150" />
-  <xacro:property name="joint_effort_limit_4" value="28" />
-  <xacro:property name="joint_effort_limit_5" value="1" />
-  <xacro:property name="joint_effort_limit_6" value="2" /><!-- let this value low! -->
 
   <!-- plate Properties -->
   <xacro:property name="plate_mass" value="0.5" />
@@ -197,13 +184,13 @@
         <visual>
            <origin xyz="0 0 0" rpy="0 0 0" />
            <geometry>
-              <mesh filename="package://kuka_manipulator_description/meshes/tools/collision/plate_40.stl" scale="0.01 0.01 0.01" /> <!-- plate is 20x20x1 m -->
+              <mesh filename="package://kr5_description/meshes/tools/plate_40.stl" scale="0.01 0.01 0.01" /> <!-- plate is 20x20x1 m -->
            </geometry>
         </visual>
         <collision>
            <origin xyz="0 0 0" rpy="0 0 0" />
            <geometry>
-              <mesh filename="package://kuka_manipulator_description/meshes/tools/collision/plate_40.stl" scale="0.01 0.01 0.01" />
+              <mesh filename="package://kr5_description/meshes/tools/plate_40.stl" scale="0.01 0.01 0.01" /> <!-- plate is 20x20x1 m -->
            </geometry>
         </collision>
      </link>

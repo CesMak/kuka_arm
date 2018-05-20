@@ -2,40 +2,96 @@
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
 
   <xacro:macro name="kr_arm_gazebo" params="prefix">
-    <!-- Just color the links: -->
 
-<gazebo reference="link_1">
-   <material>Gazebo/Green</material>
-</gazebo>
+    <xacro:unless value="$(arg use_ros_control)">
+        <!-- Just color the links: -->
+      <gazebo reference="link_1">
+         <material>Gazebo/Green</material>
+      </gazebo>
 
-<gazebo reference="link_2">
-   <material>Gazebo/Orange</material>
-</gazebo>
+      <gazebo reference="link_2">
+         <material>Gazebo/Orange</material>
+      </gazebo>
 
-<gazebo reference="link_3">
-   <material>Gazebo/Blue</material>
-</gazebo>
+      <gazebo reference="link_3">
+         <material>Gazebo/Blue</material>
+      </gazebo>
 
-<gazebo reference="link_4">
-   <material>Gazebo/Red</material>
-</gazebo>
+      <gazebo reference="link_4">
+         <material>Gazebo/Red</material>
+      </gazebo>
 
-<gazebo reference="link_5">
-   <material>Gazebo/Purple</material>
-</gazebo>
+      <gazebo reference="link_5">
+         <material>Gazebo/Purple</material>
+      </gazebo>
 
-<gazebo reference="link_6">
-   <material>Gazebo/Yellow</material>
-</gazebo>
+      <gazebo reference="link_6">
+         <material>Gazebo/Yellow</material>
+      </gazebo>
 
-<gazebo reference="base_link">
-   <material>Gazebo/Turquoise</material>
-</gazebo>
+      <gazebo reference="base_link">
+         <material>Gazebo/Turquoise</material>
+      </gazebo>
 
-<gazebo reference="ee_link">
-   <material>Gazebo/White</material>
-</gazebo>
+      <gazebo reference="ee_link">
+         <material>Gazebo/White</material>
+      </gazebo>
+    </xacro:unless>
 
+    <xacro:if value="$(arg use_ros_control)">
+      <gazebo reference="link_1">
+      <mu1>1</mu1>
+      <mu2>1</mu2>
+      <selfCollide>true</selfCollide>
+         <material>Gazebo/Green</material>
+      </gazebo>
+
+      <gazebo reference="link_2">
+      <mu1>1</mu1>
+      <mu2>1</mu2>
+      <selfCollide>true</selfCollide>
+         <material>Gazebo/Orange</material>
+      </gazebo>
+
+      <gazebo reference="link_3">
+      <mu1>1</mu1>
+      <mu2>1</mu2>
+      <selfCollide>true</selfCollide>
+         <material>Gazebo/Blue</material>
+      </gazebo>
+
+      <gazebo reference="link_4">
+      <mu1>1</mu1>
+      <mu2>1</mu2>
+      <selfCollide>true</selfCollide>
+         <material>Gazebo/Red</material>
+      </gazebo>
+
+      <gazebo reference="link_5">
+      <mu1>1</mu1>
+      <mu2>1</mu2>
+      <selfCollide>true</selfCollide>
+         <material>Gazebo/Purple</material>
+      </gazebo>
+
+      <gazebo reference="link_6">
+      <mu1>1</mu1>
+      <mu2>1</mu2>
+      <selfCollide>true</selfCollide>
+         <material>Gazebo/Yellow</material>
+      </gazebo>
+
+      <gazebo reference="base_link">
+      <mu1>1</mu1>
+      <mu2>1</mu2>
+      <selfCollide>true</selfCollide>
+         <material>Gazebo/Turquoise</material>
+      </gazebo>
+
+      <gazebo reference="ee_link">
+         <material>Gazebo/White</material>
+      </gazebo>
+    </xacro:if>
 
 <!-- p3d plugin (3D Position Interface for Ground Truth)
      This is required only for rviz that the balllink tf is known!

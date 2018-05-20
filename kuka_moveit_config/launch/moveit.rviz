@@ -5,7 +5,8 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /MotionPlanning1
-      Splitter Ratio: 0.742560029
+        - /MotionPlanning1/Planned Path1
+      Splitter Ratio: 0.392812878
     Tree Height: 332
   - Class: rviz/Help
     Name: Help
@@ -55,7 +56,7 @@ Visualization Manager:
           Z: 2
       Name: MotionPlanning
       Planned Path:
-        Color Enabled: false
+        Color Enabled: true
         Interrupt Display: false
         Links:
           All Links Enabled: true
@@ -116,11 +117,11 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
         Loop Animation: true
-        Robot Alpha: 0.5
+        Robot Alpha: 0.300000012
         Robot Color: 150; 50; 150
         Show Robot Collision: false
         Show Robot Visual: true
-        Show Trail: false
+        Show Trail: true
         State Display Time: 0.05 s
         Trail Step Size: 1
         Trajectory Topic: move_group/display_planned_path
@@ -143,7 +144,7 @@ Visualization Manager:
         Show Workspace: false
         Start State Alpha: 1
         Start State Color: 0; 255; 0
-      Planning Scene Topic: move_group/monitored_planning_scene
+      Planning Scene Topic: /move_group/monitored_planning_scene
       Robot Description: robot_description
       Scene Geometry:
         Scene Alpha: 1
@@ -247,10 +248,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 0.114797115
+      Pitch: 0.20979701
       Target Frame: world
       Value: XYOrbit (rviz)
-      Yaw: 5.63995075
+      Yaw: 5.73995018
     Saved: ~
 Window Geometry:
   Displays:
@@ -264,7 +265,7 @@ Window Geometry:
     collapsed: false
   MotionPlanning - Slider:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd0000000100000000000002b8000003befc0200000007fb000000100044006900730070006c0061007900730100000028000001e1000000d700fffffffb0000000800480065006c00700000000342000000bb0000007300fffffffb0000000a0056006900650077007300000003b0000000b0000000ad00fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e00670100000374000001890000000000000000fb0000002e004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d00200053006c00690064006500720000000000ffffffff0000004a00fffffffb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e0067010000020f000001d7000001cc00ffffff00000466000003be00000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd000000010000000000000329000003befc0200000008fb000000100044006900730070006c0061007900730100000028000001e1000000d700fffffffb0000000800480065006c00700000000342000000bb0000007300fffffffb0000000a0056006900650077007300000003b0000000b0000000ad00fffffffb0000000c00430061006d00650072006100000002ff000001610000000000000000fb0000001e004d006f00740069006f006e00200050006c0061006e006e0069006e00670100000374000001890000000000000000fb0000002e004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d00200053006c00690064006500720000000000ffffffff0000001600000016fb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e0067010000020f000001d7000001cc00fffffffb000000120020002d00200053006c00690064006500720000000000ffffffff0000000000000000000003f5000003be00000001000000020000000100000002fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Views:
     collapsed: false
   Width: 1828
