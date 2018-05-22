@@ -1,10 +1,11 @@
 <?xml version="1.0"?>
 <launch>
   <arg name="robot_name" default="kuka" />
-  <arg name="use_ros_control" default="True" />
+  <arg name="use_ros_control" default="True" /> <!-- in case of true use the ros controller plugin with update rate etc. set it to false if you wanna use it with moveIt! -->
+  <arg name="motors_controller_type" default="PositionJointInterface" /> <!-- PositionJointInterface, velocity, position -->
 
   <!-- these are the arguments you can pass this launch file, for example paused:=true -->
-  <arg name="paused" default="true"/>
+  <arg name="paused" default="false"/>
   <arg name="use_sim_time" default="true"/>
   <arg name="gui" default="true"/>
   <arg name="headless" default="false"/>
@@ -30,6 +31,11 @@
 
   <include file="$(find kuka_kr5_control)/launch/manipulator_control.launch">
      <arg name="robot_name" value="$(arg robot_name)" />
+  </include>
+
+  <!-- start the controller_node to control the plate's position for example -->
+  <include file="$(find kuka_kr5_control)/launch/start_control_node.launch">
+     <arg name="motors_controller_type" value="$(arg motors_controller_type)" />
   </include>
 
 </launch>

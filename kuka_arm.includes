@@ -21,3 +21,5 @@ kuka_moveit_config
 kuka_moveit_config/config
 kuka_moveit_config/launch
 kuka_kr5_control/launch
+kuka_kr5_control/include/kuka_kr5_control
+kuka_kr5_control

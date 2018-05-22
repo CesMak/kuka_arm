@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<launch>
+  <arg name="motors_controller_type" default="PositionJointInterface" /> <!-- PositionJointInterface, velocity, position -->
+
+  <!-- differ between different motors_controller_types! -->
+  <rosparam file="$(find kuka_kr5_control)/config/controller_node.yaml" command="load"/>
+  <node name="controller_node_name" pkg="kuka_kr5_control" type="plate_control_node" output="screen"/>
+
+
+</launch>

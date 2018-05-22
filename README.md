@@ -36,20 +36,27 @@ roslaunch kuka_kr5_gazebo rviz_connected_with_gz_using_moveit.launch
 
 # Visualize in Gazebo
 * This file is using the ros_control package and uses Position controllers
-* TODO: control a continuous law with position controllers (write a node about that)
 
 ```
 roslaunch kuka_kr5_gazebo gz_connected_with_rviz.launch
 ```
 
-![kuka_arm gazebo](https://github.com/CesMak/kuka_arm/blob/master/doc/gz_kr5.png)
+![kuka_arm gazebo](https://github.com/CesMak/kuka_arm/blob/master/doc/gzcontrol.png)
 
 
 ## Send a command to gazebo
-(start by clicking the start simulation button in gazebo!)
-
 ```
 rostopic pub /kuka/link_1_controller/command std_msgs/Float64 "data: 0.5"
+```
+
+Try also this:
+
+```
+rostopic pub /kuka/control_command geometry_msg/Point "x: 1.0 y: 0.0   z: 0.0"
+```
+
+```
+rostopic pub /kuka/control_command geometry_msg/Point "x: 2.0 y: 0.0   z: 0.0"
 ```
 
 # Sources
