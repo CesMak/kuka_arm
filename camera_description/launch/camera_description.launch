@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+
+<launch>
+  <arg name="camera_name" default="my_camera" />
+  
+  <!-- Load the:-->
+  <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find camera_description)/urdf/camera.xacro'
+  robot_name:=$(arg camera_name)
+  "
+  />
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find camera_description)/config/camera_state_visualize.rviz" required="true" />
+</launch>

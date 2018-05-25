@@ -149,11 +149,6 @@
       </collision>
     </link>
 
-
-
-<!--pos_link4.data = 3.14159;
-pos_link5.data = ;-->
-
     <link name="${prefix}link_6">
     <inertial>
        <origin xyz="0.00983949894991115 -2.78372724487979E-05 -1.11022302462516E-15" rpy="0 0 0" />

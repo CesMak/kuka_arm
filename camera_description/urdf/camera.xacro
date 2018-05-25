@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="$(arg robot_name)">
+
+    <xacro:include filename="$(find camera_description)/urdf/camera.urdf.xacro" />
+    <xacro:camera_macro prefix=""/>
+
+</robot>

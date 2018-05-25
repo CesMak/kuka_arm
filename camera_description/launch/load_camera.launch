@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+
+<launch>
+  <arg name="camera_name" default="my_camera" />
+  <arg name="use_realsense" default="True" />
+  <arg name="use_asus_xtion" default="False" />
+  <arg name="use_rgb" default="True" />
+  <arg name="use_depth" default="True" />
+  <arg name="camera_fps" default="30" />
+  <arg name="camera_width" default="640" />
+  <arg name="camera_height" default="480" />
+  <arg name="camera_pos_z" default="2.0" />
+
+  
+  <!-- Load the:-->
+  <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find camera_description)/urdf/camera.xacro'
+    robot_name:=$(arg camera_name)
+    use_realsense:=$(arg use_realsense)
+    use_asus_xtion:=$(arg use_asus_xtion)
+    use_rgb:=$(arg use_rgb)
+    use_depth:=$(arg use_depth)
+    camera_fps:=$(arg camera_fps)
+    camera_width:=$(arg camera_width)
+    camera_height:=$(arg camera_height)
+    camera_pos_z:=$(arg camera_pos_z)
+    "
+  />
+</launch>

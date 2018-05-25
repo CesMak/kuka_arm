@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller" xmlns:interface="http://ros.org/wiki/xacro" xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor" xmlns:xacro="http://ros.org/wiki/xacro"
+       name="$(arg robot_name)">
+
+<xacro:arg name="use_realsense" default="True" />
+<xacro:arg name="use_asus_xtion" default="False" />
+<xacro:arg name="camera_pos_z" default="2.0" />
+
+<xacro:include filename="$(find camera_description)/urdf/camera.gazebo.xacro" />
+<xacro:include filename="$(find camera_description)/urdf/camera_macros.urdf.xacro" />
+
+<xacro:macro name="camera_macro" params="prefix">
+   <link name="camera_footprint"/>
+
+
+<xacro:if value="$(arg use_realsense)">
+<joint name="realsense_mount_joint" type="fixed">
+   <parent link="camera_footprint" />
+   <child link="camera_mount_link" />
+   <origin xyz="0.081 -0.0461 0.15045" rpy="0.0 0.0 ${pi}" />
+</joint>
+<link name="camera_mount_link">
+   <visual>
+      <origin xyz="0.00133 -0.046 ${-0.00326+$(arg camera_pos_z)}" rpy="0.0 ${3*pi/2} 0.0" /> <!--turn -->
+      <geometry>
+         <mesh filename="package://camera_description/meshes/realsense/realsense_mount.stl" scale="0.001 0.001 0.001" />
+      </geometry>
+      <material name="dark" />
+   </visual>
+   <collision>
+      <origin xyz="0.00133 -0.056 ${-0.00326+$(arg camera_pos_z)}" rpy="0.0 ${3*pi/2} 0.0" /> <!--turn -->
+      <geometry>
+         <box size="0.0175 0.154 0.024" />
+      </geometry>
+   </collision>
+   <inertial>
+      <mass value="0.0001" />
+      <origin xyz="0.0000616 -0.0004132 -0.0000000235" />
+      <inertia ixx="40.506e-09" ixy="-0.712e-09" ixz="0.472e-09" iyy="2.546e-09" iyz="-0.601e-09" izz="39.799e-09" />
+   </inertial>
+</link>
+
+<!-- exectutes the macro in camera_macros.urdf.xacro -->
+<xacro:realsense_camera name="camera" parent="camera_mount_link">
+  <origin xyz="0.0 0.005 ${-0.00337+$(arg camera_pos_z)}" rpy="0.0 ${pi/2} ${pi}" />
+</xacro:realsense_camera>
+</xacro:if> <!-- end realsense -->
+
+
+<xacro:if value="$(arg use_asus_xtion)">
+<joint name="camera_mount_joint" type="fixed">
+   <parent link="camera_footprint" />
+   <child link="camera_mount_link" />
+   <origin xyz="0.081 -0.0461 0.15045" rpy="0.0 0.0 ${pi}" />
+</joint>
+<link name="camera_mount_link">
+   <visual>
+      <origin xyz="0.00133 -0.046 ${-0.00326+$(arg camera_pos_z)}" rpy="0.0 ${3*pi/2} 0.0" />
+      <geometry>
+         <mesh filename="package://camera_description/meshes/asus_camera/asus_camera_simple.stl" scale="0.001 0.001 0.001" />
+      </geometry>
+      <material name="dark" />
+   </visual>
+   <collision>
+      <origin xyz="0.00133 -0.056 ${-0.00326+$(arg camera_pos_z)}" rpy="0.0 ${3*pi/2} 0.0" />
+      <geometry>
+         <box size="0.0175 0.154 0.024" />
+      </geometry>
+   </collision>
+   <inertial>
+      <mass value="0.0001" />
+      <origin xyz="0.0000616 -0.0004132 -0.0000000235" />
+      <inertia ixx="40.506e-09" ixy="-0.712e-09" ixz="0.472e-09" iyy="2.546e-09" iyz="-0.601e-09" izz="39.799e-09" />
+   </inertial>
+</link>
+<xacro:asus_camera name="camera" parent="camera_mount_link">
+  <origin xyz="0.0 0.005 ${-0.00337+$(arg camera_pos_z)}" rpy="0.0 ${pi/2} ${pi}" />
+</xacro:asus_camera>
+</xacro:if>
+
+</xacro:macro>
+</robot>

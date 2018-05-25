@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+
+<launch>
+  <arg name="ball_name" default="ball" />
+  <arg name="ball_gz_update_rate" default="60" />
+  
+  
+  <!-- Load the ball:-->
+  <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find ball_description)/urdf/ball.xacro'
+  ball_name:=$(arg ball_name)
+  ball_gz_update_rate:=$(arg ball_gz_update_rate)
+  "
+  />
+
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find ball_description)/config/robot_state_visualize.rviz" required="true" />
+</launch>

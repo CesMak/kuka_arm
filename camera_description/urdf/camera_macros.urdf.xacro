@@ -1,0 +1,347 @@
+<?xml version="1.0"?>
+<!--
+Cameras:
+-> https://rosindustrial.org/news/2016/1/13/3d-camera-survey
+
+Realsense R 200 (Intel)
+ -> The FOV is 77°x43°x70° (Cone) for color camera and 70°x46°x59° (Cone) for IR camera.
+ -> https://software.intel.com/en-us/articles/realsense-r200-camera
+ -> https://www.mouser.com/pdfdocs/intel_realsense_camera_r200.pdf
+
+ -> Available Resolutions
+ @60FPS, depth at 320x240, color can be 640x480
+ @60FPS, depth at 480x360,  color can be 320x240 or 640x480
+ @30FPS, depth at 320x240, color can be 640x480 or 1920x1080
+ @30FPS, depth at 480x360, color can be 320x240, 640x480, or 1920x1080
+
+ -> FOV: COLOR:
+ Parameter				R200 Color Camera
+ Active Pixels				1920x1080
+ Sensor Aspect Ratio			16:9
+ Filter Type				IR Cut Filter
+ Focus					Fixed
+ Shutter Type				Rolling Shutter
+ Vertical Field of View			43 +/-2
+ Horizontal Field of View		70 +/-2
+ Diagonal Field of View                 77 +/-4
+
+ -> FOV: Depth:
+ Parameter                              Infrared Cameras
+ Active Pixels                          640x480
+ Sensor Aspect Ratio                    4:3
+ Filter Type                            IR Band Pass
+ Focus                                  Fixed
+ Shutter Type                           Global Shutter
+ Vertical Field of View                 46  +/-5
+ Horizontal Field of View               59  +/-5
+
+Asus Xtion Pro Live:
+    -> https://www.asus.com/de/3D-Sensor/Xtion_PRO_LIVE/
+    -> http://www.robo4you.at/wp-content/uploads/2014/11/A-Comprehensive-Characterization-of-the-Asus-Xtion-Pro-depth-sensor.pdf
+    -> Depth:
+    Distance of Use                     Between 0.8 and 3.5m
+    Field of View                       58°H 45°V, 70°D
+    Depth Image Size                    QVGA (320x240)
+    -> 3D Resolution: 640 x 480
+    -> RGB Resolution: 1280 x 1024
+    -> 30 FPS
+    -> Latency: ~1.5 frames
+    -> Type: Structured light
+
+Microsoft Kinect 1 = XBox 360 Kinect (TODO)
+
+Microsoft Kinect 2 = XBox One Kinect (TODO)
+Type: Time of flight
+Depth Range: 0.5 to 4.5 m
+3D Resolution: 512 x 424
+RGB Resolution: 1920 x 1080
+Frame Rate: 30 fps
+Latency: 20 ms minimum
+FOV: 70° H, 60° V
+Physical dims: ~250x70x45 mm (head)
+Interface: USB 3.0
+Link to ROS Driver
+Notes: Latency with ROS is multiple frames.
+Active cooling.
+
+Note:
+ The real sensor publshes tf data based on internally stored intrinsics. To support this, only the mounting link is
+ used in this macro. The corresponding frames can be added by running static_transform_publishers like so in the
+ Gazebo startup somewhere:
+  <node pkg="tf" type="static_transform_publisher" name="realsense_tf_publisher_1" args="-0.001 0.0 0 0 0 0  /camera_link /camera_depth_frame 100" />
+  <node pkg="tf" type="static_transform_publisher" name="realsense_tf_publisher_2" args="0 0 0 -1.57079632679 0 -1.57079632679 /camera_depth_frame /camera_depth_optical_frame  100" />
+  <node pkg="tf" type="static_transform_publisher" name="realsense_tf_publisher_3" args="0 0 0 0 0 0  /camera_link  /camera_rgb_frame 100" />
+  <node pkg="tf" type="static_transform_publisher" name="realsense_tf_publisher_4" args="0 0 0 -1.57079632679 0 -1.57079632679 /camera_rgb_frame /camera_rgb_optical_frame  100" />
+-->
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+    <xacro:arg name="use_realsense" default="True" />
+    <xacro:arg name="use_asus_xtion" default="False" />
+    <xacro:arg name="use_rgb" default="True" />
+    <xacro:arg name="use_depth" default="False" />
+    <xacro:arg name="camera_fps" default="30" />
+    <xacro:arg name="camera_width" default="640" />
+    <xacro:arg name="camera_height" default="480" />
+    <xacro:arg name="camera_pos_z" default="2.0" />
+
+    <xacro:property name="M_PI" value="3.1415926535897931" />
+
+    <xacro:macro name="realsense_camera_model" params="name parent *origin">
+      <joint name="${name}_joint" type="fixed">
+        <xacro:insert_block name="origin" />
+        <parent link="${parent}"/>
+        <child link="${name}_link"/>
+      </joint>
+
+      <link name="${name}_link">
+        <inertial>
+          <mass value="0.06500" />
+          <origin xyz="0 0 0" rpy="0 0 0" />
+          <inertia ixx="5.8083e-9" ixy="0" ixz="0" iyy="3.0833e-9" iyz="0" izz="5.9083e-9" />
+        </inertial>
+        <visual>
+          <origin xyz="0 0.051 0" rpy="0 0 0" />
+          <geometry>
+            <!--Dimensions taken from https://software.intel.com/en-us/realsense/devkit-->
+            <box size="0.007 0.130 0.02" />
+          </geometry>
+          <material name="DarkGrey">
+            <color rgba="0.3 0.3 0.3 1"/>
+          </material>
+        </visual>
+        <collision>
+          <origin xyz="0 0.051 0" rpy="0 0 0" />
+          <geometry>
+            <!--Dimensions taken from https://software.intel.com/en-us/realsense/devkit-->
+            <box size="0.007 0.130 0.02" />
+          </geometry>
+        </collision>
+      </link>
+
+
+      <gazebo reference="${name}_link">
+        <material>Gazebo/Blue</material>
+      </gazebo>
+    </xacro:macro>
+
+    <!--
+     The asus_camera macro only adds the model, and also adds
+     the openni gazebo plugin.
+    -->
+  <xacro:macro name="realsense_camera" params="name parent *origin">
+    <xacro:realsense_camera_model name="${name}" parent="${parent}">
+      <xacro:insert_block name="origin" />
+    </xacro:realsense_camera_model>
+
+    <gazebo reference="${name}_link">
+
+    <xacro:if value="$(arg use_rgb)">
+      <sensor type="camera" name="${name}_rgb">
+        <always_on>1</always_on>
+        <update_rate>$(arg camera_fps)</update_rate> <!-- should be 30 -->
+        <camera>
+          <horizontal_fov>${70.0 * pi/180.0}</horizontal_fov>
+          <image>
+            <format>B8G8R8</format>
+            <width>$(arg camera_width)</width>
+            <height>$(arg camera_height)</height>
+          </image>
+          <clip>
+            <near>0.001</near>
+            <far>100</far>
+          </clip>
+
+          <!-- disortion tag does not work in indigo -> go for kinetic! TODO
+          <distortion>
+            <k1>0.0</k1>
+            <k2>0.0</k2>
+            <k3>0.0</k3>
+            <p1>-0.0</p1>
+            <p2>-0.00</p2>
+            <center>0.5 0.5</center>
+          </distortion> -->
+        </camera>
+        <plugin name="${name}_camera_depth_controller" filename="libgazebo_ros_camera.so">
+          <robotNamespace>$(arg robot_name)/sensor/${name}/rgb</robotNamespace>
+          <imageTopicName>image_raw</imageTopicName>
+          <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+          <frameName>${name}_rgb_optical_frame</frameName>
+        </plugin>
+      </sensor>
+    </xacro:if>
+
+    <xacro:if value="$(arg use_depth)">
+      <sensor type="depth" name="${name}_depth">
+        <update_rate>$(arg camera_fps)</update_rate> <!-- should be 20 -->
+        <camera>
+          <horizontal_fov>${59.0 * pi/180.0}</horizontal_fov>
+          <image>
+            <format>B8G8R8</format>
+            <width>$(arg camera_width)</width>
+            <height>$(arg camera_height)</height>
+          </image>
+          <clip>
+            <near>0.5</near>
+            <far>10.0</far>
+          </clip>
+        </camera>
+        <plugin name="${name}_camera_rgb_controller" filename="libgazebo_ros_openni_kinect.so">
+          <robotNamespace>$(arg robot_name)/sensor/${name}</robotNamespace>
+          <imageTopicName>ir/image_raw</imageTopicName>
+          <cameraInfoTopicName>ir/camera_info</cameraInfoTopicName>
+          <depthImageTopicName>depth/image_raw</depthImageTopicName>
+          <depthImageCameraInfoTopicName>depth/camera_info</depthImageCameraInfoTopicName>
+          <pointCloudTopicName>depth/points</pointCloudTopicName>
+          <frameName>${name}_depth_optical_frame</frameName>
+        </plugin>
+      </sensor>
+    </xacro:if>
+
+    </gazebo>
+  </xacro:macro>
+
+
+
+    <!-- ASUS MACRO -->
+  <xacro:macro name="asus_camera_model" params="name parent *origin">
+      <joint name="${name}_joint" type="fixed">
+        <xacro:insert_block name="origin" />
+        <parent link="${parent}"/>
+        <child link="${name}_link"/>
+      </joint>
+
+      <link name="${name}_link">
+        <inertial>
+          <mass value="0.200" />
+          <origin xyz="0 0 0" rpy="0 0 0" />
+          <inertia ixx="5.8083e-4" ixy="0" ixz="0" iyy="3.0833e-5" iyz="0" izz="5.9083e-4" />
+        </inertial>
+        <visual>
+          <origin xyz="0 0 0" rpy="0 0 0" />
+          <geometry>
+            <mesh filename="package://kuka_manipulator_description/meshes/asus_camera/asus_camera_simple.dae"/>
+          </geometry>
+        </visual>
+        <collision>
+          <origin xyz="0 0 0" rpy="0 0 0" />
+          <geometry>
+            <box size="0.035 0.185 0.025"/>
+          </geometry>
+        </collision>
+      </link>
+
+      <joint name="${name}_depth_joint" type="fixed">
+        <origin xyz="0.0 0.049 0.0" rpy="0 0 0" />
+        <parent link="${name}_link" />
+        <child link="${name}_depth_frame"/>
+      </joint>
+
+      <link name="${name}_depth_frame"/>
+
+      <joint name="${name}_depth_optical_joint" type="fixed">
+        <origin xyz="0 0 0" rpy="${-M_PI/2} 0.0 ${-M_PI/2}" />
+        <parent link="${name}_depth_frame" />
+        <child link="${name}_depth_optical_frame"/>
+      </joint>
+
+      <link name="${name}_depth_optical_frame"/>
+
+      <joint name="${name}_rgb_joint" type="fixed">
+        <origin xyz="0.0 0.022 0.0" rpy="0 0 0" />
+        <parent link="${name}_link" />
+        <child link="${name}_rgb_frame"/>
+      </joint>
+
+      <link name="${name}_rgb_frame"/>
+
+      <joint name="${name}_rgb_optical_joint" type="fixed">
+        <origin xyz="0 0 0" rpy="${-M_PI/2} 0.0 ${-M_PI/2}" />
+        <parent link="${name}_rgb_frame" />
+        <child link="${name}_rgb_optical_frame"/>
+      </joint>
+
+      <link name="${name}_rgb_optical_frame"/>
+    </xacro:macro>
+
+    <xacro:macro name="asus_camera" params="name parent *origin">
+      <xacro:asus_camera_model name="${name}" parent="${parent}">
+        <xacro:insert_block name="origin" />
+      </xacro:asus_camera_model>
+
+      <!-- ASUS Xtion PRO camera for simulation -->
+   <gazebo reference="${name}_depth_frame">
+    <xacro:if value="$(arg use_depth)">
+        <sensor type="depth" name="${name}">
+        <update_rate>$(arg camera_fps)</update_rate>
+          <camera>
+            <horizontal_fov>${58 * M_PI/180.0}</horizontal_fov> <!-- was 62.8 before but why?? -->
+            <image>
+              <format>R8G8B8</format>
+              <width>$(arg camera_width)</width>
+              <height>$(arg camera_height)</height>
+            </image>
+            <clip>
+              <near>0.5</near>
+              <far>9</far>
+            </clip>
+          </camera>
+          <plugin name="${name}_camera_controller" filename="libgazebo_ros_openni_kinect.so">
+            <alwaysOn>true</alwaysOn>
+            <update_rate>$(arg camera_fps)</update_rate>
+            <imageTopicName>${name}/rgb/image_raw</imageTopicName>
+            <cameraInfoTopicName>${name}/rgb/camera_info</cameraInfoTopicName>
+            <depthImageTopicName>${name}/depth/image_raw</depthImageTopicName>
+            <depthImageCameraInfoTopicName>${name}/depth/camera_info</depthImageCameraInfoTopicName>
+            <pointCloudTopicName>${name}/depth/points</pointCloudTopicName>
+            <frameName>${name}_depth_optical_frame</frameName>
+            <distortion_k1>0.0</distortion_k1>
+            <distortion_k2>0.0</distortion_k2>
+            <distortion_k3>0.0</distortion_k3>
+            <distortion_t1>0.0</distortion_t1>
+            <distortion_t2>0.0</distortion_t2>
+          </plugin>
+        </sensor>
+      </xacro:if>
+      </gazebo>
+
+<xacro:if value="$(arg use_rgb)">
+<gazebo reference="${name}_rgb_frame">
+
+  <sensor type="camera" name="${name}_rgb">
+    <always_on>1</always_on>
+    <update_rate>$(arg camera_fps)</update_rate> <!-- should be 30 -->
+    <camera>
+      <horizontal_fov>${58 * pi/180.0}</horizontal_fov>
+      <image>
+        <format>R8G8B8</format>
+        <width>$(arg camera_width)</width>
+        <height>$(arg camera_height)</height>
+      </image>
+      <clip>
+        <near>0.001</near>
+        <far>100</far>
+      </clip>
+
+      <!-- disortion tag does not work in indigo -> go for kinetic! TODO
+      <distortion>
+        <k1>0.0</k1>
+        <k2>0.0</k2>
+        <k3>0.0</k3>
+        <p1>-0.0</p1>
+        <p2>-0.00</p2>
+        <center>0.5 0.5</center>
+      </distortion> -->
+    </camera>
+    <plugin name="${name}_camera_depth_controller" filename="libgazebo_ros_camera.so">
+      <robotNamespace>$(arg robot_name)/sensor/${name}/rgb</robotNamespace>
+      <imageTopicName>image_raw</imageTopicName>
+      <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+      <frameName>${name}_rgb_optical_frame</frameName>
+    </plugin>
+  </sensor>
+</gazebo>
+</xacro:if>
+
+    </xacro:macro>
+
+</robot>

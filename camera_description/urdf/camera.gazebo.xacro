@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+<gazebo reference="camera_footprint">
+  <static>true</static>
+</gazebo>
+
+<gazebo reference="camera_mount_link">
+  <material>Gazebo/DarkGrey</material>
+  <static>true</static>
+  <gravity>false</gravity>
+</gazebo>
+
+<gazebo reference="camera_link">
+  <material>Gazebo/DarkGrey</material>
+  <static>true</static>
+  <gravity>false</gravity>
+</gazebo>
+
+<!--
+This message pops up and it is fine, however if <gravity>false</gravity> is deleted, the camera just falls down!
+Warning [parser_urdf.cc:1010] multiple inconsistent <gravity> exists due to fixed joint reduction overwriting previous value [false] with [true].-->
+
+
+
+
+</robot>

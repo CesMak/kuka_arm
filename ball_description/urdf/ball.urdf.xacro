@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller" xmlns:interface="http://ros.org/wiki/xacro" xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor" xmlns:xacro="http://ros.org/wiki/xacro" name="$(arg ball_name)">
+   <xacro:include filename="$(find ball_description)/urdf/ball.gazebo.xacro" />
+   <xacro:macro name="ball_macro" params="prefix">
+      <link name="${prefix}ball_link">
+      <visual name="tennis_ball">
+         <origin rpy="0 0 0" xyz="0 0 0" />
+         <geometry>
+            <mesh filename="package://ball_description/models/tennis_ball/meshes/tennis_ball.dae" scale="1 1 1" />
+         </geometry>
+         <cast_shadows>1</cast_shadows>
+         <transparency>0</transparency>
+         <material name="tennis_ball"/>
+      </visual>
+         <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <mass value="0.056" />
+            <inertia ixx="0.000038" ixy="0" ixz="0" iyy="0.000038" iyz="0" izz="0.000038" />
+         </inertial>
+         <collision>
+            <origin rpy="0 0 0" xyz="0 0 0" />
+            <geometry>
+               <mesh filename="package://ball_description/models/tennis_ball/meshes/tennis_ball.dae" scale="1 1 1" />
+            </geometry>
+         </collision>
+      </link>
+      <!-- ROS base_link to KUKA $ROBROOT coordinate system transform -->
+      <link name="${prefix}ball_footprint" />
+      <joint name="${prefix}base_link-ball" type="fixed">
+         <origin xyz="0 0 0" rpy="0 0 0" />
+         <parent link="${prefix}ball_footprint" />
+         <child link="${prefix}ball_link" />
+      </joint>
+   </xacro:macro>
+</robot>
+
+<!--package://ball_on_plate_gazebo/models/tennis_ball/meshes/tennis_ball.dae
+
+
+<geometry>
+   <mesh filename="package://ball_on_plate_gazebo/models/tennis_ball/meshes/tennis_ball.dae" scale="1 1 1" />
+</geometry>
+
+<geometry>
+   <mesh filename="package://ball_on_plate_gazebo/models/red_ball/meshes/red_ball.dae" scale="1 1 1" />
+</geometry>
+
+
+-->
