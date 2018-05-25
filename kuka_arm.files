@@ -156,11 +156,14 @@ kuka_kr5_gazebo/launch/controller_utils.launch
 kuka_kr5_gazebo/launch/gz_connected_with_rviz.launch
 kuka_kr5_gazebo/launch/gz_connected_with_rviz.launch
 kuka_kr5_gazebo/launch/kuka_gazebo.launch
+kuka_kr5_gazebo/launch/load_ball.launch
+kuka_kr5_gazebo/launch/move_robot_arm.launch
 kuka_kr5_gazebo/launch/rviz_connected_with_gz_using_moveit.launch
 kuka_kr5_gazebo/launch/rviz_connected_with_gz_using_moveit.launch
 kuka_kr5_gazebo/models/tennis_ball/meshes/tennis_ball.dae
 kuka_kr5_gazebo/models/tennis_ball/tennis_ball.sdf
 kuka_kr5_gazebo/package.xml
+kuka_kr5_gazebo/start_msgs/zero_msg.msg
 kuka_kr5_gazebo/worlds/empty.world
 kuka_manipulator_description/CMakeLists.txt
 kuka_manipulator_description/config/joint_names_kr5.yaml

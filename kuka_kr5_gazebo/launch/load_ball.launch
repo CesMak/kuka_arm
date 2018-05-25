@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<launch>
+
+
+
+
+
+<arg name="use_ball" default="True" />
+<arg name="ball_name" default="ball" />
+<arg name="ball_x_pos" default="1.67" />
+<arg name="ball_y_pos" default="0.14" />
+<arg name="ball_z_pos" default="0.67" />
+
+
+
+<!-- just load ball description: -->
+<group ns="$(arg ball_name)" if="$(arg use_ball)">
+<include file="$(find ball_description)/launch/load_ball.launch">
+   <arg name="ball_name" value="$(arg ball_name)" />
+</include>
+        <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-urdf -model $(arg ball_name) -param robot_description
+    -x $(arg ball_x_pos) -y $(arg ball_y_pos) -z $(arg ball_z_pos)
+    -R 0.0 -P 0.0 -Y 0.0" />
+
+   <node name="robot_state_publisher_ball" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">
+      <remap from="/joint_states" to="/$(arg ball_name)/joint_states" />
+   </node>
+</group>
+
+<node name="odom_to_tf_ball" pkg="message_to_tf" type="message_to_tf">
+  <param name="odometry_topic" type="string" value="/gazebo/$(arg ball_name)/odom" />
+  <param name="child_frame_id" type="string" value="ball_footprint" />
+</node>
+
+</launch>

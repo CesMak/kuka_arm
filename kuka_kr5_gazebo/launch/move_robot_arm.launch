@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<launch>
+
+<node pkg="rostopic" type="rostopic" name="pub_zero_msg"
+args="pub /kuka/control_command geometry_msgs/Point --latch --file=$(find kuka_kr5_gazebo)/start_msgs/zero_msg.msg"
+output="screen"/>
+</launch>

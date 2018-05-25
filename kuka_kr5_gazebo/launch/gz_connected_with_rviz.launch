@@ -20,7 +20,7 @@
     <arg name="ball_z_pos" default="0.67" />
 
   <!-- these are the arguments you can pass this launch file, for example paused:=true -->
-  <arg name="paused" default="true"/>
+  <arg name="paused" default="false"/>
   <arg name="use_sim_time" default="true"/>
   <arg name="gui" default="true"/>
   <arg name="headless" default="false"/>
@@ -76,34 +76,17 @@
          <node pkg="tf" type="static_transform_publisher" name="camera_mount_link_to_world" args="0 0 0 0 0 0  /world /camera_footprint 200" />
     </group>
 
+    <!--    move robot arm after 20 secs: -->
+    <node pkg="kuka_kr5_gazebo" type="timed_roslaunch.sh"
+      args="20 kuka_kr5_gazebo move_robot_arm.launch"
+      name="move_arm_after20sec" output="screen">
+    </node>
 
-
-
-
-
-<!--<node name="pub_zero_position" pkg="rostopic" type="publish" output="screen"
-      args="/kuka/control_command geometry_msg/Point x: 1.0 y: 0.0   z: 0.0"/>-->
-
-
-    <!-- just load ball description: -->
-    <group ns="$(arg ball_name)" if="$(arg use_ball)">
-       <include file="$(find ball_description)/launch/load_ball.launch">
-          <arg name="ball_name" value="$(arg ball_name)" />
-       </include>
-
-        <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-urdf -model $(arg ball_name) -param robot_description
-        -x $(arg ball_x_pos) -y $(arg ball_y_pos) -z $(arg ball_z_pos)
-        -R 0.0 -P 0.0 -Y 0.0" />
-
-       <node name="robot_state_publisher_ball" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">
-          <remap from="/joint_states" to="/$(arg ball_name)/joint_states" />
-       </node>
-    </group>
-
-   <node name="odom_to_tf_ball" pkg="message_to_tf" type="message_to_tf">
-      <param name="odometry_topic" type="string" value="/gazebo/$(arg ball_name)/odom" />
-      <param name="child_frame_id" type="string" value="ball_footprint" />
-   </node>
+<!--    load ball after 25 secs -->
+<node pkg="kuka_kr5_gazebo" type="timed_roslaunch.sh"
+  args="25 kuka_kr5_gazebo load_ball.launch"
+  name="load_ball_after25" output="screen">
+</node>
 
 </launch>
 
