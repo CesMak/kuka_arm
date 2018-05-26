@@ -11,7 +11,8 @@
   <!-- effort values can be found here: https://github.com/ros-industrial/universal_robot/issues/32-->
 
   <!-- plate Properties -->
-  <xacro:property name="plate_mass" value="0.5" />
+  <!-- a plate with 40x40x1 (cm) -->
+  <xacro:property name="plate_mass" value="0.5175" />
   <xacro:property name="plate_width" value="0.4" />
 
   <!-- Kinematic model -->
@@ -149,11 +150,6 @@
       </collision>
     </link>
 
-
-
-<!--pos_link4.data = 3.14159;
-pos_link5.data = ;-->
-
     <link name="${prefix}link_6">
     <inertial>
        <origin xyz="0.00983949894991115 -2.78372724487979E-05 -1.11022302462516E-15" rpy="0 0 0" />
@@ -184,7 +180,7 @@ pos_link5.data = ;-->
         <inertial>
            <origin xyz="0.00983949894991115 -2.78372724487979E-05 -1.11022302462516E-15" rpy="0 0 0" />
            <mass value="${plate_mass}" />
-           <inertia ixx="${0.08333333333*5*plate_mass*plate_width}" ixy="0" ixz="0" iyy="${0.08333333333*plate_mass*plate_width}" iyz="0" izz="${0.08333333333*plate_mass*plate_width}" />
+           <inertia ixx="0.0138" ixy="0" ixz="0" iyy="0.0138" iyz="0" izz="0.0217" /> <!-- ${0.08333333333*plate_mass*plate_width}-->
         </inertial>
         <visual>
            <origin xyz="0 0 0" rpy="0 0 0" />

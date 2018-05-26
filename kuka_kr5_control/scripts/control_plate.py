@@ -86,20 +86,20 @@
 
 import sympy as sp  ## sudo apt-get install python-sympy
 import numpy as np
-import pandas as pd  ## pip install pandas (for pretty matrix print)
+import control as co # pip install control
 
 # Do all symbolically first:
 g, m, r, dR, dP, TP_xP, TB, TP_yP = sp.symbols('g, m, r, dR, dP, TP_xP, TB, TP_yP')
 
 # constants:
 a = (g*m*r**2)/(m*r**2+ TB)
-b = (dR*r) / (TP_xP)  #<<TODO (I do not have a Rahmen!
+b = (dR) / (TP_xP)  #<<TODO (I do not have a Rahmen!
 c = (g*m)  / (TP_xP)
 h = (g*m*r)/ (TP_xP)
 d = (dP )  / (TP_yP)
 e = (dP*r) / (TP_yP)
 f = (g*m)  / (TP_yP)
-gg = (g*m*r)/ (TP_yP)
+gg = (g*m*r)/ (TP_xP)
 
 h = 1      / (TP_xP)
 i = 1      / (TP_yP)
@@ -113,8 +113,8 @@ A = sp.Matrix([[ 0,  1,  0,  0,  0,  0,  0,  0],
                 [0,  0,  0, -d, -f,  0,  0,  0],
                 [0,  0,  0,  0,  0,  0,  1,  0],
                 [0,  0,  -a, -e, -gg, 0,  0,  0],
-                [0,  0,  0,  0,  0,  0,  0,  0],
-                [-a, -b, 0,  0,  0,  0,  -gg, 1]
+                [0,  0,  0,  0,  0,  0,  0,  1],
+                [-a, -b, 0,  0,  0,  0,  -gg, 0]
            ])
 
 B = sp.Matrix([ [0, 0],
@@ -152,8 +152,28 @@ print np.matrix(A)
 print "B:="
 print np.matrix(B)
 
-A_eig = A.eigenvals()
+A_eig = list(A.eigenvals().keys())
+
+for i in range(0, len(A_eig)):
+  A_eig[i]=sp.N(A_eig[i])
 
 print "A_eig:="
 print np.matrix(A_eig)
+
+# Controllability
+control_matrix = co.ctrb(A, B)
+control_matrix = sp.Matrix(control_matrix)
+
+# Observability:
+observe_matrix = co.obsv(A, C)
+observe_matrix = sp.Matrix(observe_matrix)
+
+print "Rank of control_matrix: "+str(control_matrix.rank())
+print "Rank of observe_matrix: "+str(observe_matrix.rank()) ## tODO this is a problem!?
+
+# pole wish position:
+
+#u = Fw-Rx
+
+#F = −C(A − BR)−1B−1
 
