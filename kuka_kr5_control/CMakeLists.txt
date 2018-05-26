@@ -11,6 +11,8 @@ add_compile_options(-std=c++11)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
+  geometry_msgs
+  nav_msgs
   hardware_interface
   controller_manager
 )

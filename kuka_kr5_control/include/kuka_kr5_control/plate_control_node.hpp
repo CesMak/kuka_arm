@@ -9,6 +9,7 @@
 #include <sensor_msgs/Imu.h>
 #include <std_msgs/Float64.h>
 #include <geometry_msgs/PointStamped.h>
+#include <nav_msgs/Odometry.h>
 
 //#include <Eigen/Dense>  /* for matrix multiplication */
 #include <math.h>       /* sin, sqrt */
@@ -46,11 +47,12 @@ protected:
   // ROS API callbacks
   void jointsCallback(const sensor_msgs::JointStateConstPtr& joint_state_msg);
   void controlCommandCallback(const geometry_msgs::PointConstPtr& command_point_msg);
-
+  void ballCallback(const nav_msgs::OdometryConstPtr& ball_state_msg);
 
   // class members
   //Control2D control2D_;
   geometry_msgs::Point input_command_point_msg_;
+  nav_msgs::Odometry   input_ball_state_msg_;
 
   // helper variables:
   //sensor_msgs::Imu previous_imu_msg_;
@@ -66,6 +68,7 @@ protected:
   //ros::Subscriber imu_sub_;
   ros::Subscriber joints_sub_;
   ros::Subscriber command_sub_;
+  ros::Subscriber ball_state_sub_;
 
   //publisher:
   ros::Publisher joint_commands_1_pub_;

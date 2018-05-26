@@ -13,8 +13,8 @@ namespace kuka
     //gains_2D_Kxz_=nh.param("control_constants/gains_2D_Kxz",(std::vector<double> ) {1.0,2.0,3.0,4.0});
 
     //Subscriber:
-   // imu_sub_ = nh.subscribe("/ballbot/sensor/imu", 5, &ControlNode::imuCallback,this);
       joints_sub_ = nh.subscribe("/kuka/joint_states", 5, &ControlNode::jointsCallback, this);
+      ball_state_sub_ = nh.subscribe("/gazebo/ball/odom", 5, &ControlNode::ballCallback, this);
       command_sub_ = nh.subscribe("/kuka/control_command", 5, &ControlNode::controlCommandCallback, this);
 
     //Publisher:
@@ -40,6 +40,11 @@ namespace kuka
   void ControlNode::controlCommandCallback(const geometry_msgs::PointConstPtr& command_point_msg)
   {
     input_command_point_msg_ = *command_point_msg;
+  }
+
+  void ControlNode::ballCallback(const nav_msgs::OdometryConstPtr& ball_state_msg)
+  {
+    input_ball_state_msg_ = *ball_state_msg;
   }
 
   void ControlNode::jointsCallback(const sensor_msgs::JointStateConstPtr& joint_state_msg)
@@ -97,6 +102,12 @@ namespace kuka
   //update (publish messages...) every 10ms. This is only updated every 100 ms! but why?!
   void ControlNode::update()
   {
+    // inputs:
+    // previous_joint_state_msg_; // angles (4,5)
+    // ball position in plate_system:
+    // rostopic echo /gazebo/ball/odom
+
+
     //calc2MotorCommands_withOdometry();
 
     // note that the wheel torque is limited to ca. 4.1Nm.

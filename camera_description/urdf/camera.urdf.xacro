@@ -5,7 +5,7 @@
 <xacro:arg name="use_realsense" default="True" />
 <xacro:arg name="use_asus_xtion" default="False" />
 <xacro:arg name="camera_pos_z" default="2.0" />
-<xacro:arg name="camera_pos_x" default="-1.0" />
+<xacro:arg name="camera_pos_x" default="1.0" />
 
 <xacro:include filename="$(find camera_description)/urdf/camera.gazebo.xacro" />
 <xacro:include filename="$(find camera_description)/urdf/camera_macros.urdf.xacro" />

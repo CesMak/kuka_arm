@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <launch>
+  <arg name="start_kuka" default="True" />
   <arg name="robot_name" default="kuka" />
   <arg name="use_ros_control" default="True" /> <!-- in case of true use the ros controller plugin with update rate etc. set it to false if you wanna use it with moveIt! -->
-
   <arg name="motors_controller_type" default="PositionJointInterface" /> <!-- PositionJointInterface, velocity, position -->
 
   <arg name="start_rviz" default="True" />
@@ -12,8 +12,8 @@
    <arg name="camera_name" default="my_camera" />
    <arg name="use_realsense" default="True" />
    <arg name="use_asus_xtion" default="False" />
-   <arg name="camera_pos_z" default="1.4" />
-   <arg name="camera_pos_x" default="1.6" />
+   <arg name="camera_pos_z" default="1" />
+   <arg name="camera_pos_x" default="-1.5" /> <!-- actually the - makes no sense no idea why it must be here... -->
    <arg name="use_rgb" default="True" />
    <arg name="use_depth" default="True" />
    <arg name="camera_fps" default="30" /> <!-- both fps rgb and depth  -->
@@ -43,6 +43,7 @@
     <arg name="headless" value="$(arg headless)"/>
   </include>
 
+<group if="$(arg start_kuka)">
   <include file="$(find kr5_description)/launch/kr5_upload.launch">
      <arg name="robot_name" value="$(arg robot_name)" />
      <arg name="use_ros_control" value="$(arg use_ros_control)" />
@@ -60,6 +61,7 @@
   <include file="$(find kuka_kr5_control)/launch/start_control_node.launch">
      <arg name="motors_controller_type" value="$(arg motors_controller_type)" />
   </include>
+</group>
 
 
     <!-- just load the camera -->
@@ -78,7 +80,7 @@
           </include>
 
          <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-urdf -model $(arg camera_name) -param robot_description
-        -x 0.0 -y 0.0 -z 0.0
+        -x 0.0 -y 0.2 -z 0.0
          -R 0.0 -P 0.0 -Y 0.0" />
 
      <node name="robot_state_publisher_camera" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">

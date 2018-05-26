@@ -23,7 +23,7 @@
     camera_width:=$(arg camera_width)
     camera_height:=$(arg camera_height)
     camera_pos_z:=$(arg camera_pos_z)
-    camera_pos_z:=$(arg camera_pos_x)
+    camera_pos_x:=$(arg camera_pos_x)
     "
   />
 </launch>
