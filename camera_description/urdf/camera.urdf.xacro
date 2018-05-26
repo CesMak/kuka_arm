@@ -5,6 +5,7 @@
 <xacro:arg name="use_realsense" default="True" />
 <xacro:arg name="use_asus_xtion" default="False" />
 <xacro:arg name="camera_pos_z" default="2.0" />
+<xacro:arg name="camera_pos_x" default="-1.0" />
 
 <xacro:include filename="$(find camera_description)/urdf/camera.gazebo.xacro" />
 <xacro:include filename="$(find camera_description)/urdf/camera_macros.urdf.xacro" />
@@ -21,14 +22,14 @@
 </joint>
 <link name="camera_mount_link">
    <visual>
-      <origin xyz="0.00133 -0.046 ${-0.00326+$(arg camera_pos_z)}" rpy="0.0 ${3*pi/2} 0.0" /> <!--turn -->
+      <origin xyz="${0.00133+$(arg camera_pos_x)} -0.046 ${-0.00326+$(arg camera_pos_z)}" rpy="0.0 ${3*pi/2} 0.0" /> <!--turn -->
       <geometry>
          <mesh filename="package://camera_description/meshes/realsense/realsense_mount.stl" scale="0.001 0.001 0.001" />
       </geometry>
       <material name="dark" />
    </visual>
    <collision>
-      <origin xyz="0.00133 -0.056 ${-0.00326+$(arg camera_pos_z)}" rpy="0.0 ${3*pi/2} 0.0" /> <!--turn -->
+      <origin xyz="${0.00133+$(arg camera_pos_x)} -0.056 ${-0.00326+$(arg camera_pos_z)}" rpy="0.0 ${3*pi/2} 0.0" /> <!--turn -->
       <geometry>
          <box size="0.0175 0.154 0.024" />
       </geometry>
@@ -42,7 +43,7 @@
 
 <!-- exectutes the macro in camera_macros.urdf.xacro -->
 <xacro:realsense_camera name="camera" parent="camera_mount_link">
-  <origin xyz="0.0 0.005 ${-0.00337+$(arg camera_pos_z)}" rpy="0.0 ${pi/2} ${pi}" />
+  <origin xyz="${0.0+$(arg camera_pos_x)} 0.005 ${-0.00337+$(arg camera_pos_z)}" rpy="0.0 ${pi/2} ${pi}" />
 </xacro:realsense_camera>
 </xacro:if> <!-- end realsense -->
 
@@ -55,14 +56,14 @@
 </joint>
 <link name="camera_mount_link">
    <visual>
-      <origin xyz="0.00133 -0.046 ${-0.00326+$(arg camera_pos_z)}" rpy="0.0 ${3*pi/2} 0.0" />
+      <origin xyz="${0.00133+$(arg camera_pos_x)} -0.046 ${-0.00326+$(arg camera_pos_z)}" rpy="0.0 ${3*pi/2} 0.0" />
       <geometry>
          <mesh filename="package://camera_description/meshes/asus_camera/asus_camera_simple.stl" scale="0.001 0.001 0.001" />
       </geometry>
       <material name="dark" />
    </visual>
    <collision>
-      <origin xyz="0.00133 -0.056 ${-0.00326+$(arg camera_pos_z)}" rpy="0.0 ${3*pi/2} 0.0" />
+      <origin xyz="${0.00133+$(arg camera_pos_x)} -0.056 ${-0.00326+$(arg camera_pos_z)}" rpy="0.0 ${3*pi/2} 0.0" />
       <geometry>
          <box size="0.0175 0.154 0.024" />
       </geometry>
@@ -74,7 +75,7 @@
    </inertial>
 </link>
 <xacro:asus_camera name="camera" parent="camera_mount_link">
-  <origin xyz="0.0 0.005 ${-0.00337+$(arg camera_pos_z)}" rpy="0.0 ${pi/2} ${pi}" />
+  <origin xyz="${0.0+$(arg camera_pos_x)} 0.005 ${-0.00337+$(arg camera_pos_z)}" rpy="0.0 ${pi/2} ${pi}" />
 </xacro:asus_camera>
 </xacro:if>
 

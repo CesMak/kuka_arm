@@ -10,7 +10,7 @@
   <arg name="camera_width" default="640" />
   <arg name="camera_height" default="480" />
   <arg name="camera_pos_z" default="2.0" />
-
+  <arg name="camera_pos_x" default="2.0" />
   
   <!-- Load the:-->
   <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find camera_description)/urdf/camera.xacro'
@@ -23,6 +23,7 @@
     camera_width:=$(arg camera_width)
     camera_height:=$(arg camera_height)
     camera_pos_z:=$(arg camera_pos_z)
+    camera_pos_z:=$(arg camera_pos_x)
     "
   />
 </launch>
