@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   geometry_msgs
   nav_msgs
+  tf
   hardware_interface
   controller_manager
 )
@@ -110,7 +111,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS std_msgs
+  CATKIN_DEPENDS std_msgs roscpp tf std_msgs geometry_msgs nav_msgs
 )
 
 ###########

@@ -93,10 +93,12 @@
     </group>
 
     <!--    move robot arm after 20 secs: -->
-    <node pkg="kuka_kr5_gazebo" type="timed_roslaunch.sh"
-      args="10 kuka_kr5_gazebo move_robot_arm.launch"
-      name="move_arm_after20sec" output="screen">
-    </node>
+    <group if="$(arg start_kuka)">
+      <node pkg="kuka_kr5_gazebo" type="timed_roslaunch.sh"
+        args="10 kuka_kr5_gazebo move_robot_arm.launch"
+        name="move_arm_after20sec" output="screen">
+      </node>
+</group>
 
 <!--    load ball after 25 secs -->
 <node pkg="kuka_kr5_gazebo" type="timed_roslaunch.sh"
@@ -109,7 +111,7 @@
 </node>
 
 <group if="$(arg start_rviz)">
-   <node pkg="rviz" type="rviz" name="rviz" args="-d $(find kuka_kr5_gazebo)/config/rviz_gz.rviz" required="true" />
+   <node pkg="rviz" type="rviz" name="rviz" args="-d $(find kuka_kr5_gazebo)/config/rviz_gz.rviz" />
 </group>
 
 </launch>

@@ -10,6 +10,7 @@
 #include <std_msgs/Float64.h>
 #include <geometry_msgs/PointStamped.h>
 #include <nav_msgs/Odometry.h>
+#include <tf/transform_listener.h>
 
 //#include <Eigen/Dense>  /* for matrix multiplication */
 #include <math.h>       /* sin, sqrt */
@@ -34,13 +35,12 @@ protected:
   double convertDistanceToAngle(double dis);
   std::vector<double> convertVectorToAngle(std::vector<double> input_vec);
 
-  void calc2DMotorCommands();
-  void calc2MotorCommands_withoutOdometry();
-  void calc2MotorCommands_withOdometry();
-  std::vector<double> toEulerAngle(double x, double y, double z, double w);
+  void transformPoint(const tf::StampedTransform& transform,
+                      const geometry_msgs::Point& point_in, geometry_msgs::Point& point_out) const;
+//  std::vector<double> toEulerAngle(double x, double y, double z, double w);
 
-  std::vector<double> convertToAngleVel(std::vector<double> input_vec);
-  double linearVelToAngleVel(double linear_vel);
+//  std::vector<double> convertToAngleVel(std::vector<double> input_vec);
+//  double linearVelToAngleVel(double linear_vel);
 
   // UI callbacks
 
@@ -50,6 +50,8 @@ protected:
   void ballCallback(const nav_msgs::OdometryConstPtr& ball_state_msg);
 
   // class members
+  tf::TransformListener tf_listener_;
+
   //Control2D control2D_;
   geometry_msgs::Point input_command_point_msg_;
   nav_msgs::Odometry   input_ball_state_msg_;

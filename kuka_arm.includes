@@ -40,3 +40,4 @@ ball_description/models/tennis_ball
 ball_description/models/tennis_ball/meshes
 ball_description/config
 ball_description/launch
+kuka_kr5_control/scripts

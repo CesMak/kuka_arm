@@ -106,22 +106,110 @@ namespace kuka
     // previous_joint_state_msg_; // angles (4,5)
     // ball position in plate_system:
     // rostopic echo /gazebo/ball/odom
+    std::string to_frame = std::string("ee_link");
+    std::string from_frame = std::string("world");
+    std::cout<<"input"<<input_ball_state_msg_.pose.pose.position<<std::endl;
+    geometry_msgs::Point ball_pos_in_plate_frame;
+
+    double des_ball_pos_y = 0.1;
+    double des_ball_pos_x = 0.2;
+      try
+      {
+        if (tf_listener_.canTransform(to_frame, from_frame, ros::Time()))
+        {
+          tf::StampedTransform transform;
+          tf_listener_.lookupTransform(to_frame, from_frame, ros::Time(), transform);
+          transformPoint(transform, input_ball_state_msg_.pose.pose.position, ball_pos_in_plate_frame);
+        }
+      }
+      catch (tf::TransformException ex)
+      {
+        ROS_ERROR("[BallTrackingNode] transformBallState: %s", ex.what());
+      }
+
+    std::cout<<"result"<<ball_pos_in_plate_frame<<std::endl;
+
+    /*
+     * States x:
+     alpha : Angle around link4
+     dalpha: angular vel around link 4
+     beta  : Angle around link5
+     dbeta : angular vel around link5
+     x     : ball x pos relative to plate
+     dx    : ball vel x
+     y     : ball y pos relative to plate
+     dy    : ball vel y
+
+     * Inputs u (torques of link4, link5):
+     MR = M4
+     MP = M5
+
+     * non linear control model:
+     [dalpha       x2
+     ddalpha       f1(x, u)
+     dbeta         x4
+     ddbeta     =  f2(x, u)
+     dx            x6
+     ddx           f3(x, u)
+     dy            x8
+     ddy]          f4(x, u)
+
+     * linear control model:
+    dx = Ax+Bu
+    y =  Cx = [x; y]
+        0  1  0  0  0  0  0  0        0  0
+        0  -b 0  0  0  0  -c 0        h  0
+        0  0  0  1  0  0  0  0        0  0        0 0 0 0 1 0 0 0
+   A =  0  0  0 -d -f  0  0  0    B = 0  i    C = 0 0 0 0 0 0 1 0
+        0  0  0  0  0  0  1  0        0  0
+        0  0  -a -e -g 0  0  0        0  j
+        0  0  0  0  0  0  0  0        0  0
+        -a -b 0  0  0  0  -g 1        k  0
+
+    with constants:
+    a = (g m*r^2)/( m r^2 + TB)
+    b = (dR r) / (TP,xP)  <<TODO (I do not have a Rahmen!
+    c = (g m)  / (TP,xP)
+    h = (g m r)/ (TP,xP)
+    d = (dP )  / (TP,yP)
+    e = (dP r) / (TP,yP)
+    f = (g m)  / (TP,yP)
+    g = (g m r)/ (TP,yP)
+
+    h = 1      / (TP,xP)
+    i = 1      / (TP,yP)
+    j = r      / (TP,yP)
+    k = r      / (TP,xP)
+
+    description of parameters:
+    name            value    unit       description
+    m               0.056    kg         ball mass
+    g               9.81     kg/m^2     earth force
+    r               0.032    m          ball radius
+    dP              0        Nm s       damping Plate
+    dR              0.1835   Nm s       damping Rahmen
+    TB              0.000038 kg m^2     ball inertia (ixx=iyy=izz)
+    TP,xP           0.0138   kg m^2     Plate inertia (ixx value in gazebo)
+    TP,yP           0.0138   kg m^2     Plate inertia (iyy)
+
+    Using these values and linearizing around x0 = [0...0], u0 = [0, 0]:
+
+    */
+
+    // ouptputs
+    //joint_commands_1_pub_
+
+    // control law:
 
 
-    //calc2MotorCommands_withOdometry();
+  }
 
-    // note that the wheel torque is limited to ca. 4.1Nm.
-//    std_msgs::Float64 realT1;
-//    std_msgs::Float64 realT2;
-//    std_msgs::Float64 realT3;
-
-//    realT1.data=realT_.at(0);
-//    realT2.data=realT_.at(1);
-//    realT3.data=realT_.at(2);
-
-//    joint_commands_1_pub_.publish(realT1);
-//    joint_commands_2_pub_.publish(realT2);
-//    joint_commands_3_pub_.publish(realT3);
+  void ControlNode::transformPoint(const tf::StampedTransform& transform, const geometry_msgs::Point& point_in, geometry_msgs::Point& point_out) const
+  {
+    tf::Point p;
+    tf::pointMsgToTF(point_in, p);
+    p = transform * p;
+    tf::pointTFToMsg(p, point_out);
   }
 
 }  // end namespace ballbot
