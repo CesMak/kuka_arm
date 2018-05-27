@@ -87,6 +87,8 @@
 import sympy as sp  ## sudo apt-get install python-sympy
 import numpy as np
 import control as co # pip install control
+import slycot            # pip install   slycot
+
 
 # Do all symbolically first:
 g, m, r, dR, dP, TP_xP, TB, TP_yP = sp.symbols('g, m, r, dR, dP, TP_xP, TB, TP_yP')
@@ -111,7 +113,7 @@ A = sp.Matrix([[ 0,  1,  0,  0,  0,  0,  0,  0],
                 [0,  -b,  0,  0,  0,  0,  -c, 0],
                 [0,  0,  0,  1,  0,  0,  0,  0],
                 [0,  0,  0, -d, -f,  0,  0,  0],
-                [0,  0,  0,  0,  0,  0,  1,  0],
+                [0,  0,  0,  0,  0,  1,  0,  0],
                 [0,  0,  -a, -e, -gg, 0,  0,  0],
                 [0,  0,  0,  0,  0,  0,  0,  1],
                 [-a, -b, 0,  0,  0,  0,  -gg, 0]
@@ -146,6 +148,7 @@ subs_vec = [(g, g_), (m, m_), (r, r_), (dP, dP_), (dR, dR_), (TB, TB_),
 
 A = A.subs(subs_vec)
 B = B.subs(subs_vec)
+
 print "A:="
 print np.matrix(A)
 
@@ -172,8 +175,37 @@ print "Rank of control_matrix: "+str(control_matrix.rank())
 print "Rank of observe_matrix: "+str(observe_matrix.rank()) ## tODO this is a problem!?
 
 # pole wish position:
+poles_wish = [-6, -6, -6, -6, -6, -6, -6, -6]
 
-#u = Fw-Rx
 
-#F = −C(A − BR)−1B−1
+A = np.matrix(A)
+B = np.matrix(B)
+C = np.matrix(C)
+A = A.astype(float)
+B = B.astype(float)
+C = C.astype(float)
+
+R = co.place(A, B, poles_wish)
+
+print "R:="
+print np.matrix(R)
+
+# check it:
+A_neu = A-np.dot(B,R)
+
+print "A-BR="
+print np.matrix(A_neu)
+
+print "eig(A-BR)="
+print (np.linalg.eig(A_neu)[0])
+
+# filter matrix F = -(C(A-BR)^-1)B)^-1
+F = np.linalg.inv(np.dot(C, np.dot(np.linalg.inv(A_neu), B)))
+
+print "F:"
+print F
+
+# u = Fw - Rx
+
+w=[0;0]
 

@@ -12,7 +12,9 @@
 #include <nav_msgs/Odometry.h>
 #include <tf/transform_listener.h>
 
-//#include <Eigen/Dense>  /* for matrix multiplication */
+#include <Eigen/Dense>  /* for matrix multiplication */
+#include <Eigen/Core>
+#include <Eigen/Eigen>
 #include <math.h>       /* sin, sqrt */
 
 //#include <std_msgs/String.h>
@@ -37,6 +39,9 @@ protected:
 
   void transformPoint(const tf::StampedTransform& transform,
                       const geometry_msgs::Point& point_in, geometry_msgs::Point& point_out) const;
+  void transformVelocity(const tf::StampedTransform& transform,
+                         const geometry_msgs::Point& vel_in, geometry_msgs::Point& vel_out) const;
+
 //  std::vector<double> toEulerAngle(double x, double y, double z, double w);
 
 //  std::vector<double> convertToAngleVel(std::vector<double> input_vec);
@@ -58,10 +63,15 @@ protected:
 
   // helper variables:
   //sensor_msgs::Imu previous_imu_msg_;
-  sensor_msgs::JointState previous_joint_state_msg_;
+  //  sensor_msgs::ImageConstPtr current_image_;
+  sensor_msgs::JointStateConstPtr previous_joint_state_msg_;
 
   // parameters from the parameter server
- // std::vector<double> gains_2D_Kxz_;
+  std::vector<double> control_Matrix_R_;
+  std::vector<double> control_Matrix_F_;
+
+  Eigen::Matrix <double , 2 , 8> eigen_control_Matrix_R_;
+  Eigen::Matrix <double , 2 , 2 > eigen_control_Matrix_F_;
 
   std::string controller_type_;
   std::string motors_controller_type_;
