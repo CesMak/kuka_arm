@@ -1,9 +1,19 @@
 #include <kuka_kr5_control/plate_control_node.hpp>
 
+//using namespace Eigen;
+
 namespace kuka
 {
   //constructor is called only once:
   ControlNode::ControlNode(ros::NodeHandle& nh)
+    : alpha_(0.0)
+    , dalpha_(0.0)
+    , beta_(0.0)
+    , dbeta_(0.0)
+    , ball_x_(0.0)
+    , dball_x_(0.0)
+    , ball_y_(0.0)
+    , dball_y_(0.0)
   {
     //get Params:
     //controller_type_ = nh.param("control_constants/controller_type", std::string("2D"));
@@ -17,7 +27,7 @@ namespace kuka
     for(int i=0; i<2; i++) {
       for( int j=0; j<8; j++){
         eigen_control_Matrix_R_(i , j ) = control_Matrix_R_[u];
-        std::cout<<eigen_control_Matrix_R_<<std::endl;
+        //std::cout<<eigen_control_Matrix_R_<<std::endl;
         u++;
       }
     }
@@ -30,8 +40,8 @@ namespace kuka
       }
     }
 
-    std::cout<<eigen_control_Matrix_R_<<std::endl;
-    std::cout<<eigen_control_Matrix_F_<<std::endl;
+//    std::cout<<eigen_control_Matrix_R_<<std::endl;
+//    std::cout<<eigen_control_Matrix_F_<<std::endl;
 
     //Subscriber:
     joints_sub_ = nh.subscribe("/kuka/joint_states", 5, &ControlNode::jointsCallback, this);
@@ -67,11 +77,6 @@ namespace kuka
   {
     input_ball_state_msg_ = *ball_state_msg;
   }
-
-//  void BallTrackingNode::imageCb(const sensor_msgs::ImageConstPtr& image)
-//  {
-//    current_image_ = image;
-//  }
 
   void ControlNode::jointsCallback(const sensor_msgs::JointStateConstPtr& joint_state_msg)
   {
@@ -156,33 +161,39 @@ namespace kuka
 
     // how to optain control law? --> see scripts/control_plate.py
     // u = Fw - Rx
-    //    F=
-    //    [[0.         3.03124099]
-    //     [3.03124099 0.        ]]
-    //R:=
-    //[[ 6.21845521e+01  7.55026005e-04 -0.00000000e+00 -0.00000000e+00
-    //  -0.00000000e+00 -0.00000000e+00 -3.58060099e+00  4.59203044e+00]
-    // [-0.00000000e+00 -0.00000000e+00  3.07779971e+00  3.95866474e-01
-    //  -3.58060099e+00 -2.02082733e+00 -0.00000000e+00 -0.00000000e+00]]
 
     // Plate states x:
     if(previous_joint_state_msg_)
     {
-      double alpha  = previous_joint_state_msg_->position[3]-3.1415898225691254;
-      double dalpha = previous_joint_state_msg_->velocity[3];
-      double beta   = previous_joint_state_msg_->position[4]- 1.5707947869759256;
-      double dbeta  = previous_joint_state_msg_->velocity[4];
+      double alpha_  = previous_joint_state_msg_->position[3]-3.1415898225691254;
+      double dalpha_ = previous_joint_state_msg_->velocity[3];
+      double beta_   = previous_joint_state_msg_->position[4]- 1.5707947869759256;
+      double dbeta_  = previous_joint_state_msg_->velocity[4];
     }
 
-    // Ball states:
-    double ball_x  = ball_pos_in_plate_frame.x;
-    double dball_x = ball_vel_in_plate_frame.x;
-    double ball_y  = ball_pos_in_plate_frame.y;
-    double dball_y = ball_vel_in_plate_frame.y;
+    // w
+    double des_ball_pos_x = 0.1;
+    double des_ball_pos_y = 0.2;
 
-    // w:
-    double des_ball_pos_y = 0.1;
-    double des_ball_pos_x = 0.2;
+    eigen_w_(0,0) = des_ball_pos_x;
+    eigen_w_(1,0) = des_ball_pos_y;
+
+    // Ball states:
+    double ball_x_  = ball_pos_in_plate_frame.x;
+    double dball_x_ = ball_vel_in_plate_frame.x;
+    double ball_y_  = ball_pos_in_plate_frame.y;
+    double dball_y_ = ball_vel_in_plate_frame.y;
+
+    states_(0,0) = alpha_;
+    states_(1,0) = dalpha_;
+    states_(2,0) = beta_;
+    states_(3,0) = dbeta_;
+    states_(4,0) = ball_x_;
+    states_(5,0) = dball_x_;
+    states_(6,0) = ball_y_;
+    states_(7,0) = dball_y_;
+
+    eigen_u_ = eigen_control_Matrix_F_*eigen_w_ -eigen_control_Matrix_R_*states_;
   }
 
   void ControlNode::transformPoint(const tf::StampedTransform& transform, const geometry_msgs::Point& point_in, geometry_msgs::Point& point_out) const

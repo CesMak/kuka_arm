@@ -5,7 +5,7 @@
   <arg name="use_ros_control" default="True" /> <!-- in case of true use the ros controller plugin with update rate etc. set it to false if you wanna use it with moveIt! -->
   <arg name="motors_controller_type" default="PositionJointInterface" /> <!-- PositionJointInterface, velocity, position -->
 
-  <arg name="start_rviz" default="True" />
+  <arg name="start_rviz" default="False" />
 
    <!-- Camera:-->
    <arg name="use_camera" default="True" />
@@ -30,7 +30,7 @@
   <!-- these are the arguments you can pass this launch file, for example paused:=true -->
   <arg name="paused" default="false"/>
   <arg name="use_sim_time" default="true"/>
-  <arg name="gui" default="true"/>
+  <arg name="gui" default="false"/>
   <arg name="headless" default="false"/>
   <arg name="debug" default="false"/>
 

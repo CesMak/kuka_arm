@@ -59,7 +59,17 @@ protected:
 
   //Control2D control2D_;
   geometry_msgs::Point input_command_point_msg_;
-  nav_msgs::Odometry   input_ball_state_msg_;
+  nav_msgs::Odometry  input_ball_state_msg_;
+
+  // states:
+  double alpha_;
+  double dalpha_;
+  double beta_;
+  double dbeta_ ;
+  double ball_x_ ;
+  double dball_x_ ;
+  double ball_y_;
+  double dball_y_ ;
 
   // helper variables:
   //sensor_msgs::Imu previous_imu_msg_;
@@ -70,8 +80,12 @@ protected:
   std::vector<double> control_Matrix_R_;
   std::vector<double> control_Matrix_F_;
 
-  Eigen::Matrix <double , 2 , 8> eigen_control_Matrix_R_;
+  Eigen::Matrix <double , 2 , 8 > eigen_control_Matrix_R_;
   Eigen::Matrix <double , 2 , 2 > eigen_control_Matrix_F_;
+  Eigen::Matrix <double , 8, 1  > states_;
+  Eigen::Matrix <double , 2, 1  > eigen_w_;
+  Eigen::Matrix <double , 2, 1  > eigen_u_;
+
 
   std::string controller_type_;
   std::string motors_controller_type_;
