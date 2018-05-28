@@ -81,6 +81,10 @@ namespace kuka
   void ControlNode::jointsCallback(const sensor_msgs::JointStateConstPtr& joint_state_msg)
   {
     previous_joint_state_msg_ = joint_state_msg;
+  }
+
+  void ControlNode::joints_manual_control()
+  {
 
     std_msgs::Float64 pos_link1;
     std_msgs::Float64 pos_link2;
@@ -132,6 +136,8 @@ namespace kuka
 
   void ControlNode::update()
   {
+    joints_manual_control();
+
     // Convert vel and position of ball in plate frame:
     std::string to_frame = std::string("ee_link");
     std::string from_frame = std::string("world");

@@ -48,6 +48,7 @@ protected:
 //  double linearVelToAngleVel(double linear_vel);
 
   // UI callbacks
+  void joints_manual_control();
 
   // ROS API callbacks
   void jointsCallback(const sensor_msgs::JointStateConstPtr& joint_state_msg);
