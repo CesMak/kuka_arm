@@ -3,9 +3,10 @@
   <arg name="start_kuka" default="True" />
   <arg name="robot_name" default="kuka" />
   <arg name="use_ros_control" default="True" /> <!-- in case of true use the ros controller plugin with update rate etc. set it to false if you wanna use it with moveIt! -->
-  <arg name="motors_controller_type" default="PositionJointInterface" /> <!-- PositionJointInterface, velocity, position -->
+  <arg name="motors_controller_type" default="EffortJointInterface" /> <!-- PositionJointInterface EffortJointInterface, velocity, position set it just for link 4 and 5-->
 
   <arg name="start_rviz" default="False" />
+  <arg name="move_arm" default="True" /> <!-- moves arm once after ... seconds -->
 
    <!-- Camera:-->
    <arg name="use_camera" default="True" />
@@ -21,7 +22,7 @@
    <arg name="camera_height" default="480" />
 
     <!-- Ball: -->
-    <arg name="use_ball" default="True" />
+    <arg name="use_ball" default="False" />
     <arg name="ball_name" default="ball" />
     <arg name="ball_x_pos" default="1.67" />
     <arg name="ball_y_pos" default="0.14" />
@@ -47,6 +48,7 @@
   <include file="$(find kr5_description)/launch/kr5_upload.launch">
      <arg name="robot_name" value="$(arg robot_name)" />
      <arg name="use_ros_control" value="$(arg use_ros_control)" />
+     <arg name="motors_controller_type" value="$(arg motors_controller_type)" />
   </include>
 
   <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
@@ -55,6 +57,7 @@
 
   <include file="$(find kuka_kr5_control)/launch/manipulator_control.launch">
      <arg name="robot_name" value="$(arg robot_name)" />
+     <arg name="motors_controller_type" value="$(arg motors_controller_type)" />
   </include>
 
   <!-- start the controller_node to control the plate's position for example -->
@@ -93,7 +96,7 @@
     </group>
 
     <!--    move robot arm after 20 secs: -->
-    <group if="$(arg start_kuka)">
+    <group if="$(arg move_arm)">
       <node pkg="kuka_kr5_gazebo" type="timed_roslaunch.sh"
         args="10 kuka_kr5_gazebo move_robot_arm.launch"
         name="move_arm_after20sec" output="screen">
@@ -101,6 +104,7 @@
 </group>
 
 <!--    load ball after 25 secs -->
+    <group if="$(arg use_ball)">
 <node pkg="kuka_kr5_gazebo" type="timed_roslaunch.sh"
   args="12 kuka_kr5_gazebo load_ball.launch
   ball_name:=$(arg ball_name)
@@ -109,6 +113,7 @@
   ball_z_pos:=$(arg ball_z_pos)"
   name="load_ball_after25" output="screen">
 </node>
+</group>
 
 <group if="$(arg start_rviz)">
    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find kuka_kr5_gazebo)/config/rviz_gz.rviz" />

@@ -1,7 +1,12 @@
 <?xml version="1.0"?>
 <launch>
 
-<node pkg="rostopic" type="rostopic" name="pub_zero_msg"
-args="pub /kuka/control_command geometry_msgs/Point --latch --file=$(find kuka_kr5_gazebo)/start_msgs/zero_msg.msg"
+<node pkg="rostopic" type="rostopic" name="pub_freaky13"
+args="pub /kuka/control13_command geometry_msgs/Point --latch --file=$(find kuka_kr5_gazebo)/start_msgs/link13_freaky_msg.msg"
 output="screen"/>
+
+<node pkg="rostopic" type="rostopic" name="pub_freaky46"
+args="pub /kuka/control46_command geometry_msgs/Point --latch --file=$(find kuka_kr5_gazebo)/start_msgs/link46_freaky_msg.msg"
+output="screen"/>
+
 </launch>

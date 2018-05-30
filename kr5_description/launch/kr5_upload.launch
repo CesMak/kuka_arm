@@ -3,10 +3,12 @@
 
 <arg name="robot_name" default="kr5" />
 <arg name="use_ros_control" default="True" />
+<arg name="motors_controller_type" default="EffortJointInterface" />
 
 <!-- Load robot description to parameter server -->
 <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find kr5_description)/urdf/kr5_robot.urdf.xacro'
   robot_name:=$(arg robot_name)
+  motors_controller_type:=$(arg motors_controller_type)
   use_ros_control:=$(arg use_ros_control)"
   />
 </launch>

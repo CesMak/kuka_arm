@@ -52,14 +52,23 @@ protected:
 
   // ROS API callbacks
   void jointsCallback(const sensor_msgs::JointStateConstPtr& joint_state_msg);
-  void controlCommandCallback(const geometry_msgs::PointConstPtr& command_point_msg);
+
+  void controlCommandCallback_13(const geometry_msgs::PointConstPtr& command13_angle_msg);
+  void controlCommandCallback_46(const geometry_msgs::PointConstPtr& command46_angle_msg);
+
   void ballCallback(const nav_msgs::OdometryConstPtr& ball_state_msg);
+
+
+  void control_Position_of_Link_with_Torque(double des_pos_angle, double des_torque, int link_number, ros::Publisher link_pub);
+  void set_Position_of_Joint(double des_pos_angle_rad, double link_number);
+  void set_all_Link_Positions(double pos1, double pos2, double pos3, double pos4, double pos5, double pos6);
 
   // class members
   tf::TransformListener tf_listener_;
 
-  //Control2D control2D_;
-  geometry_msgs::Point input_command_point_msg_;
+  geometry_msgs::Point input_command13_angle_msg_;
+  geometry_msgs::Point input_command46_angle_msg_;
+
   nav_msgs::Odometry  input_ball_state_msg_;
 
   // states:
@@ -94,7 +103,8 @@ protected:
    // subscriber
   //ros::Subscriber imu_sub_;
   ros::Subscriber joints_sub_;
-  ros::Subscriber command_sub_;
+  ros::Subscriber command13_sub_;
+  ros::Subscriber command46_sub_;
   ros::Subscriber ball_state_sub_;
 
   //publisher:

@@ -19,17 +19,22 @@ link_3_controller:
   joint: joint_a3
   pid: {p: 1000.00, i: 750.00, d: 50.00}
 
-link_4_controller:
+link_6_controller:
   type: position_controllers/JointPositionController
+  joint: joint_a6
+  #pid: {p: 1000.00, i: 200.00, d: 200.00}
+
+
+## effort controller:
+link_4_controller:
+  type: effort_controllers/JointEffortController
   joint: joint_a4
   pid: {p: 1000.00, i: 200.00, d: 200.00}
 
 link_5_controller:
-  type: position_controllers/JointPositionController
+  type: effort_controllers/JointEffortController
   joint: joint_a5
-  pid: {p: 1000.00, i: 200.00, d: 200.00}
+  #pid: {p: 1000.00, i: 200.00, d: 200.00}
 
-link_6_controller:
-  type: position_controllers/JointPositionController
-  joint: joint_a6
-  pid: {p: 1000.00, i: 200.00, d: 200.00}
+
+

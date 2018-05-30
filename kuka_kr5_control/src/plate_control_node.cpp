@@ -46,14 +46,19 @@ namespace kuka
     //Subscriber:
     joints_sub_ = nh.subscribe("/kuka/joint_states", 5, &ControlNode::jointsCallback, this);
     ball_state_sub_ = nh.subscribe("/gazebo/ball/odom", 5, &ControlNode::ballCallback, this);
-    command_sub_ = nh.subscribe("/kuka/control_command", 5, &ControlNode::controlCommandCallback, this);
+
+    command13_sub_ = nh.subscribe("/kuka/control13_command", 5, &ControlNode::controlCommandCallback_13, this);
+    command46_sub_ = nh.subscribe("/kuka/control46_command", 5, &ControlNode::controlCommandCallback_46, this);
 
     //Publisher:
     // this can be effort, velocity or position controllers as defined in the controller_node.yaml (in config folder)
+    // 1-4 are position controllers:
     joint_commands_1_pub_ = nh.advertise<std_msgs::Float64>("/kuka/link_1_controller/command", 5);
     joint_commands_2_pub_ = nh.advertise<std_msgs::Float64>("/kuka/link_2_controller/command", 5);
     joint_commands_3_pub_ = nh.advertise<std_msgs::Float64>("/kuka/link_3_controller/command", 5);
     joint_commands_4_pub_ = nh.advertise<std_msgs::Float64>("/kuka/link_4_controller/command", 5);
+
+    // caution these are effort controllers!
     joint_commands_5_pub_ = nh.advertise<std_msgs::Float64>("/kuka/link_5_controller/command", 5);
     joint_commands_6_pub_ = nh.advertise<std_msgs::Float64>("/kuka/link_6_controller/command", 5);
 
@@ -67,10 +72,96 @@ namespace kuka
     //action server:
   }
 
-  // rostopic pub /kuka/control_command geometry_msg/Point "x: 1.0 y: 0.0   z: 0.0"
-  void ControlNode::controlCommandCallback(const geometry_msgs::PointConstPtr& command_point_msg)
+  void ControlNode::set_all_Link_Positions(double pos1, double pos2, double pos3, double pos4, double pos5, double pos6)
   {
-    input_command_point_msg_ = *command_point_msg;
+    set_Position_of_Joint(pos1, 1);
+    set_Position_of_Joint(pos2, 2);
+    set_Position_of_Joint(pos3, 3);
+    set_Position_of_Joint(pos4, 4);
+    set_Position_of_Joint(pos5, 5);
+    set_Position_of_Joint(pos6, 6);
+  }
+
+  // of joints 1 - joint 6 (as link_nubers)
+  void ControlNode::set_Position_of_Joint(double des_pos_angle_rad, double link_number)
+  {
+    ros::Publisher link_command;
+    if(link_number==1)
+        link_command=joint_commands_1_pub_;
+    if(link_number==2)
+        link_command=joint_commands_2_pub_;
+    if(link_number==3)
+        link_command=joint_commands_3_pub_;
+    if(link_number==4)
+        link_command=joint_commands_4_pub_;
+    if(link_number==5)
+        link_command=joint_commands_5_pub_;
+    if(link_number==6)
+        link_command=joint_commands_6_pub_;
+
+    if( (link_number == 5) || (link_number == 4) )
+    {
+      // these joints are torque controlled!
+      link_number = link_number -1; // for link number conversion!
+      double default_torque = 5;
+      control_Position_of_Link_with_Torque(des_pos_angle_rad, default_torque, link_number, link_command);
+    }
+    else
+    {
+      // these joints are position controlled:
+      std_msgs::Float64 pos_link_data;
+      pos_link_data.data = des_pos_angle_rad;
+      link_command.publish(pos_link_data);
+    }
+  }
+
+  // important only link 4, 5 are torque control links
+  // only for these links this method was written:
+  // also note that the turning direction of the of the des_torque so the sign
+  // does not matter the code always turns in a way to minimize the error between the des_angle and the current angle
+  // the amount of the des_torque determines somehow how fast the joint is turned.
+  // cause only link_number 3 = link 4 and link_number 4 = link 5 are torque controlled
+  void ControlNode::control_Position_of_Link_with_Torque(double des_pos_angle, double des_torque, int link_number, ros::Publisher link_pub)
+  {
+    if(previous_joint_state_msg_)
+    {
+      double curr_angle = previous_joint_state_msg_->position[link_number];
+
+          if(link_number == 3 && des_pos_angle<curr_angle)
+          {
+            des_torque=des_torque*-1;
+          }
+
+          if(link_number == 4 && des_pos_angle<curr_angle)
+          {
+            des_torque=des_torque*-1;
+          }
+
+      double error = std::abs(curr_angle-des_pos_angle);
+      std_msgs::Float64 pos_link;
+      //std::cout<<"pre angle "<<previous_joint_state_msg_->position[link_number]<<" des angle: "<<des_pos_angle<<" error "<<error<<std::endl;
+
+      if(error > 0.0174533) // accuracy of 1 degree
+      {
+        pos_link.data = des_torque;
+      }
+      else
+      {
+        pos_link.data = -des_torque;
+      }
+      link_pub.publish(pos_link);
+    }
+
+  }
+
+  void ControlNode::controlCommandCallback_13(const geometry_msgs::PointConstPtr& command13_angle_msg)
+  {
+    input_command13_angle_msg_ = *command13_angle_msg;
+  }
+
+  void ControlNode::controlCommandCallback_46(const geometry_msgs::PointConstPtr& command46_angle_msg)
+  {
+    input_command46_angle_msg_ = *command46_angle_msg;
   }
 
   void ControlNode::ballCallback(const nav_msgs::OdometryConstPtr& ball_state_msg)
@@ -85,58 +176,16 @@ namespace kuka
 
   void ControlNode::joints_manual_control()
   {
-
-    std_msgs::Float64 pos_link1;
-    std_msgs::Float64 pos_link2;
-    std_msgs::Float64 pos_link3;
-    std_msgs::Float64 pos_link4;
-    std_msgs::Float64 pos_link5;
-    std_msgs::Float64 pos_link6;
-
-    pos_link1.data = 0.0;
-    pos_link2.data = 0.0;
-    pos_link3.data = 0.0;
-    pos_link4.data = 0.0;
-    pos_link5.data = 0.0;
-    pos_link6.data = 0.0;
-
-    if(input_command_point_msg_.x == 1.0 && input_command_point_msg_.y == 0.0 && input_command_point_msg_.z == 0.0 )
-    {
-      ROS_INFO_ONCE("driving to zero state");
-      pos_link4.data = 3.14159;
-      pos_link5.data = 1.57079632679;
-    }
-    else if(input_command_point_msg_.x == 2.0 && input_command_point_msg_.y == 0.0 && input_command_point_msg_.z == 0.0 )
-    {
-      ROS_INFO_ONCE("driving to freaky state");
-      pos_link1.data = 1.5159;
-      pos_link2.data = -1.74159;
-      pos_link3.data = -0.74159;
-      pos_link4.data = 3.14159;
-      pos_link5.data = 1.57079632679;
-      pos_link6.data = 1.57079632679;
-    }
-    else
-    {
-      pos_link1.data = 0.0;
-      pos_link2.data = 0.0;
-      pos_link3.data = 0.0;
-      pos_link4.data = 0.0;
-      pos_link5.data = 0.0;
-      pos_link6.data = 0.0;
-    }
-
-    joint_commands_1_pub_.publish(pos_link1);
-    joint_commands_2_pub_.publish(pos_link2);
-    joint_commands_3_pub_.publish(pos_link3);
-    joint_commands_4_pub_.publish(pos_link4);
-    joint_commands_5_pub_.publish(pos_link5);
-    joint_commands_6_pub_.publish(pos_link6);
+      set_all_Link_Positions(input_command13_angle_msg_.x, input_command13_angle_msg_.y, input_command13_angle_msg_.z,
+                             input_command46_angle_msg_.x, input_command46_angle_msg_.y, input_command46_angle_msg_.z);
   }
 
   void ControlNode::update()
   {
     joints_manual_control();
+    //control_Position_of_Link_with_Torque(0.5, 7, 4, joint_commands_5_pub_);
+    //control_Position_of_Link_with_Torque(0.5, 7, 3, joint_commands_4_pub_);
+
 
     // Convert vel and position of ball in plate frame:
     std::string to_frame = std::string("ee_link");

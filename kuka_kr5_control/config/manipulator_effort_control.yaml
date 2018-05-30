@@ -1,0 +1,36 @@
+# Publish all joint states -----------------------------------
+  joint_state_controller:
+    type: joint_state_controller/JointStateController
+    publish_rate: 50
+
+  # Position Controllers ---------------------------------------
+  link_1_controller:
+    type: effort_controllers/JointEffortController
+    joint: joint_a1
+    #pid: {p: 1000.00, i: 200.00, d: 200.00}
+
+  link_2_controller:
+    type: effort_controllers/JointEffortController
+    joint: joint_a2
+    #pid: {p: 5000.00, i: 500.00, d: 500.00}
+
+  link_3_controller:
+    type: effort_controllers/JointEffortController
+    joint: joint_a3
+   # pid: {p: 1000.00, i: 750.00, d: 50.00}
+
+  link_4_controller:
+    type: effort_controllers/JointEffortController
+    joint: joint_a4
+    #pid: {p: 1000.00, i: 200.00, d: 200.00}
+
+  link_5_controller:
+    type: effort_controllers/JointEffortController
+    joint: joint_a5
+    #pid: {p: 1000.00, i: 200.00, d: 200.00}
+
+  link_6_controller:
+    type: effort_controllers/JointEffortController
+    joint: joint_a6
+    #pid: {p: 1000.00, i: 200.00, d: 200.00}
+  

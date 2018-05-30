@@ -1,9 +1,21 @@
 <!-- -*- mode: XML -*- -->
 <launch>
    <arg name="robot_name" default="kuka" />
+   <arg name="motors_controller_type" default="PositionJointInterface" />
+
+
+<group if="$(eval arg('motors_controller_type') =='PositionJointInterface')">
 
   <!-- Load joint controller configurations from YAML file to parameter server -->
   <rosparam file="$(find kuka_kr5_control)/config/manipulator_control.yaml" command="load" ns="$(arg robot_name)"/>
+</group>
+
+<group if="$(eval arg('motors_controller_type') =='EffortJointInterface')">
+
+  <!-- Load joint controller configurations from YAML file to parameter server -->
+  <rosparam file="$(find kuka_kr5_control)/config/manipulator_effort_and_position_control.yaml" command="load" ns="$(arg robot_name)"/>
+</group>
+
 
   <!-- load the controllers -->
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
