@@ -90,6 +90,13 @@
 
       <gazebo reference="ee_link">
          <material>Gazebo/White</material>
+         <fdir1>0 0 0</fdir1>
+         <kp>1e+13</kp>
+         <kd>1.0</kd>
+         <selfCollide>0</selfCollide>
+         <maxContacts>10</maxContacts>
+         <mu1>10</mu1>
+         <mu2>10</mu2>
       </gazebo>
     </xacro:if>
 

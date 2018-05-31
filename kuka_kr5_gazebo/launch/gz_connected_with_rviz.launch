@@ -7,7 +7,7 @@
 
   <arg name="start_rviz" default="False" />
   <arg name="move_arm" default="True" /> <!-- moves arm once after ... seconds -->
-  <arg name="move_arm_to" default="zero" /> <!-- zero or freaky state -->
+  <arg name="move_arm_to" default="zero" /> <!-- zero or freaky state top -->
 
    <!-- Camera:-->
    <arg name="use_camera" default="True" />
@@ -25,9 +25,9 @@
     <!-- Ball: -->
     <arg name="use_ball" default="True" />
     <arg name="ball_name" default="ball" />
-    <arg name="ball_x_pos" default="1.4" /> <!-- 1.4 -->
-    <arg name="ball_y_pos" default="0.0" /> <!-- world y= x(frame) -->
-    <arg name="ball_z_pos" default="0.67" />
+    <arg name="ball_x_pos" default="1.4" /> <!-- 1.4 (for zero state) -->
+    <arg name="ball_y_pos" default="0.0" /> <!-- world y= x(frame) (for zero state!) -->
+    <arg name="ball_z_pos" default="0.66" />   <!-- 0.67 (for zero state), 1.76 (top) -->
 
   <!-- these are the arguments you can pass this launch file, for example paused:=true -->
   <arg name="paused" default="false"/>
@@ -109,7 +109,7 @@
 <!--    load ball after 25 secs -->
     <group if="$(arg use_ball)">
       <node pkg="kuka_kr5_gazebo" type="timed_roslaunch.sh"
-        args="30 kuka_kr5_gazebo load_ball.launch
+        args="18 kuka_kr5_gazebo load_ball.launch
         ball_name:=$(arg ball_name)
         ball_x_pos:=$(arg ball_x_pos)
         ball_y_pos:=$(arg ball_y_pos)
@@ -121,7 +121,7 @@
     <!--   switch control mode -->
     <group if="$(arg move_arm)">
       <node pkg="kuka_kr5_gazebo" type="timed_roslaunch.sh"
-        args="31 kuka_kr5_gazebo switch_to_continuous_effort_control_mode.launch
+        args="20 kuka_kr5_gazebo switch_to_continuous_effort_control_mode.launch
           move_arm_to:=switch"
         name="switch_to_continuous_effort_control" output="screen">
       </node>

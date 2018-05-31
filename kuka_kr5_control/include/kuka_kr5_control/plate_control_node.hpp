@@ -90,6 +90,9 @@ protected:
   double ball_y_;
   double dball_y_ ;
 
+  double integral_x_;
+  double integral_y_;
+
   // helper variables:
   //sensor_msgs::Imu previous_imu_msg_;
   //  sensor_msgs::ImageConstPtr current_image_;

@@ -14,6 +14,8 @@ namespace kuka
     , dball_x_(0.0)
     , ball_y_(0.0)
     , dball_y_(0.0)
+    , integral_x_(0.0)
+    , integral_y_(0.0)
   {
     //get Params:
     //controller_type_ = nh.param("control_constants/controller_type", std::string("2D"));
@@ -103,7 +105,7 @@ namespace kuka
     {
       // these joints are torque controlled!
       link_number = link_number -1; // for link number conversion!
-      double default_torque = 8;
+      double default_torque = 70;
       control_Position_of_Link_with_Torque(des_pos_angle_rad, default_torque, link_number, link_command);
     }
     else
@@ -141,18 +143,12 @@ namespace kuka
       std_msgs::Float64 pos_link;
       //std::cout<<"pre angle "<<previous_joint_state_msg_->position[link_number]<<" des angle: "<<des_pos_angle<<" error "<<error<<std::endl;
 
-//      if(error < 0.0)
-//      {
-//       pos_link.data = des_torque*0.1;
-//       std::cout<<"slow mode"<<link_number<<std::endl;
-//      }
-
-      if(error < 0.01)
+      if(error < 0.5)
       {
-       pos_link.data = des_torque*0.01;
+       des_torque = des_torque*error;
       }
 
-      if(error > 0.00174533) // accuracy of 0.1 degree // https://www.rapidtables.com/convert/number/radians-to-degrees.html
+      if(error > 0.000174533) // accuracy of 0.01 degree // https://www.rapidtables.com/convert/number/radians-to-degrees.html
       {
         pos_link.data = des_torque;
       }
@@ -194,13 +190,19 @@ namespace kuka
   double* ControlNode::p_controller(double alpha_, double dalpha_, double beta_, double dbeta_, double ball_x_, double dball_x_, double ball_y_, double dball_y_, double des_ball_pos_x, double des_ball_pos_y)
   {
     static double result[2];
+    double Ki = 0;
+    double dt = 0.01;
 
     double x_error = des_ball_pos_x-ball_x_;
     double y_error = des_ball_pos_y-ball_y_;
 
+    // Integral term
+    integral_x_ += x_error * dt;
+    integral_y_ += y_error * dt;
+
     // x_error > 0 --> beta muss größer werden!
-    result[0] = x_error*15-60*dball_x_;
-    result[1] = y_error*15-80*dball_y_; //y_error*5;
+    result[0] = 1.6357790106427972+x_error*5-30*dball_x_+integral_x_*Ki;
+    result[1] = -0.7030511730932498+y_error*5-30*dball_y_+integral_y_*Ki;
 
     // u = -K*e
     return result;
@@ -305,8 +307,8 @@ namespace kuka
         double dalpha_  = previous_joint_state_msg_->velocity[4];
 
         // w
-        double des_ball_pos_x = 0.1;
-        double des_ball_pos_y = 0.2;
+        double des_ball_pos_x = 0.05; // you have to add additionally 0.1 but why???
+        double des_ball_pos_y = 0.05;
 
         // Ball states:
         double ball_x_  = ball_pos_in_plate_frame.point.x;
@@ -327,7 +329,7 @@ namespace kuka
         joint_commands_5_pub_.publish(pos_link_data_5x);
 
         std::cout<<"x: "<<ball_x_<<" :"<<des_ball_pos_x<< "   y: "<<ball_y_<<" :"<<des_ball_pos_y
-                 <<"dx: "<<dball_x_<<" :"<<0<< "   dy: "<<dball_y_<<" :"<<0
+                 <<"  dx: "<<dball_x_<<" :"<<0<< "  dy: "<<dball_y_<<" :"<<0
                  << "  alpha:" <<alpha_ << " beta: "<<beta_<<
                     "   torque 5x, 4y:  "<<pos_link_data_4y.data <<",  "<<pos_link_data_5x.data<<std::endl;
       }
@@ -377,7 +379,7 @@ int main(int argc, char** argv)
   }
 
   kuka::ControlNode node(nh);
-  ros::Rate loop_rate(nh.param("/kuka/control_constants/update_rate", 100.0));
+  ros::Rate loop_rate(nh.param("/kuka/control_constants/update_rate", 30.0));
 
   // TODO wait here to start publishing nodes information
   // until first non zero value from gazebo is received!

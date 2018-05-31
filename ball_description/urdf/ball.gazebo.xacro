@@ -4,13 +4,13 @@
       <gravity>1</gravity>
       <maxVel>1000</maxVel>
       <minDepth>0</minDepth>
-      <mu1>0.25</mu1>
-      <mu2>0.25</mu2>
+      <mu1>10</mu1>
+      <mu2>10</mu2>
       <fdir1>0 0 0</fdir1>
-      <kp>1e+13</kp>
+      <kp>1e+20</kp>
       <kd>1.0</kd>
       <selfCollide>0</selfCollide>
-      <maxContacts>10</maxContacts>
+      <maxContacts>1</maxContacts>
       <material>Gazebo/Blue</material> <!-- caution this overrwrites (dae) everything!!! -->
    </gazebo>
 

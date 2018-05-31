@@ -152,6 +152,8 @@ kuka_kr5_control/config/manipulator_control.yaml
 kuka_kr5_control/config/manipulator_control.yaml
 kuka_kr5_control/config/manipulator_control.yaml
 kuka_kr5_control/config/manipulator_control.yaml
+kuka_kr5_control/config/manipulator_effort_and_position_control.yaml
+kuka_kr5_control/config/manipulator_effort_control.yaml
 kuka_kr5_control/config/model.rviz
 kuka_kr5_control/config/model.rviz
 kuka_kr5_control/config/model.rviz
@@ -218,9 +220,17 @@ kuka_kr5_gazebo/launch/load_ball.launch
 kuka_kr5_gazebo/launch/move_robot_arm.launch
 kuka_kr5_gazebo/launch/rviz_connected_with_gz_using_moveit.launch
 kuka_kr5_gazebo/launch/rviz_connected_with_gz_using_moveit.launch
+kuka_kr5_gazebo/launch/switch_to_continuous_effort_control_mode.launch
 kuka_kr5_gazebo/models/tennis_ball/meshes/tennis_ball.dae
 kuka_kr5_gazebo/models/tennis_ball/tennis_ball.sdf
 kuka_kr5_gazebo/package.xml
+kuka_kr5_gazebo/start_msgs/link13_freaky_msg.msg
+kuka_kr5_gazebo/start_msgs/link13_switch_msg.msg
+kuka_kr5_gazebo/start_msgs/link13_top_msg.msg
+kuka_kr5_gazebo/start_msgs/link13_zero_msg.msg
+kuka_kr5_gazebo/start_msgs/link46_freaky_msg.msg
+kuka_kr5_gazebo/start_msgs/link46_top_msg.msg
+kuka_kr5_gazebo/start_msgs/link46_zero_msg.msg
 kuka_kr5_gazebo/start_msgs/zero_msg.msg
 kuka_kr5_gazebo/worlds/empty.world
 kuka_manipulator_description/CMakeLists.txt
