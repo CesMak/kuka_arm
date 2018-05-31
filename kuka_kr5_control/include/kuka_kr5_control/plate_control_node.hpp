@@ -37,6 +37,9 @@ protected:
   double convertDistanceToAngle(double dis);
   std::vector<double> convertVectorToAngle(std::vector<double> input_vec);
 
+  tf::StampedTransform transformBallState(const std::string& target_frame, const geometry_msgs::PointStamped& state_in,
+                                            geometry_msgs::PointStamped& state_out) const;
+
   void transformPoint(const tf::StampedTransform& transform,
                       const geometry_msgs::Point& point_in, geometry_msgs::Point& point_out) const;
   void transformVelocity(const tf::StampedTransform& transform,
@@ -62,6 +65,12 @@ protected:
   void control_Position_of_Link_with_Torque(double des_pos_angle, double des_torque, int link_number, ros::Publisher link_pub);
   void set_Position_of_Joint(double des_pos_angle_rad, double link_number);
   void set_all_Link_Positions(double pos1, double pos2, double pos3, double pos4, double pos5, double pos6);
+
+  // controller methods:
+  double* p_controller(double alpha_, double dalpha_, double beta_, double dbeta_,
+                        double ball_x_, double dball_x_, double ball_y_, double dball_y_, double des_ball_pos_x, double des_ball_pos_y);
+  double* state_controller(double alpha_, double dalpha_, double beta_, double dbeta_,
+                        double ball_x_, double dball_x_, double ball_y_, double dball_y_, double des_ball_pos_x, double des_ball_pos_y);
 
   // class members
   tf::TransformListener tf_listener_;

@@ -185,13 +185,13 @@
         <visual>
            <origin xyz="0 0 0" rpy="0 0 0" />
            <geometry>
-              <mesh filename="package://kr5_description/meshes/tools/plate_40.stl" scale="0.01 0.01 0.01" /> <!-- plate is 20x20x1 m -->
+              <mesh filename="package://kr5_description/meshes/tools/plate_40.stl" scale="0.02 0.02 0.02" /> <!-- plate is 20x20x1cm if scale is 0.01 -->
            </geometry>
         </visual>
         <collision>
            <origin xyz="0 0 0" rpy="0 0 0" />
            <geometry>
-              <mesh filename="package://kr5_description/meshes/tools/plate_40.stl" scale="0.01 0.01 0.01" /> <!-- plate is 20x20x1 m -->
+              <mesh filename="package://kr5_description/meshes/tools/plate_40.stl" scale="0.02 0.02 0.02" /> <!-- plate is 20x20x1 m -->
            </geometry>
         </collision>
      </link>

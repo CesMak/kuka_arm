@@ -103,7 +103,7 @@ namespace kuka
     {
       // these joints are torque controlled!
       link_number = link_number -1; // for link number conversion!
-      double default_torque = 5;
+      double default_torque = 8;
       control_Position_of_Link_with_Torque(des_pos_angle_rad, default_torque, link_number, link_command);
     }
     else
@@ -141,7 +141,18 @@ namespace kuka
       std_msgs::Float64 pos_link;
       //std::cout<<"pre angle "<<previous_joint_state_msg_->position[link_number]<<" des angle: "<<des_pos_angle<<" error "<<error<<std::endl;
 
-      if(error > 0.0174533) // accuracy of 1 degree
+//      if(error < 0.0)
+//      {
+//       pos_link.data = des_torque*0.1;
+//       std::cout<<"slow mode"<<link_number<<std::endl;
+//      }
+
+      if(error < 0.01)
+      {
+       pos_link.data = des_torque*0.01;
+      }
+
+      if(error > 0.00174533) // accuracy of 0.1 degree // https://www.rapidtables.com/convert/number/radians-to-degrees.html
       {
         pos_link.data = des_torque;
       }
@@ -180,64 +191,26 @@ namespace kuka
                              input_command46_angle_msg_.x, input_command46_angle_msg_.y, input_command46_angle_msg_.z);
   }
 
-  void ControlNode::update()
+  double* ControlNode::p_controller(double alpha_, double dalpha_, double beta_, double dbeta_, double ball_x_, double dball_x_, double ball_y_, double dball_y_, double des_ball_pos_x, double des_ball_pos_y)
   {
-    joints_manual_control();
-    //control_Position_of_Link_with_Torque(0.5, 7, 4, joint_commands_5_pub_);
-    //control_Position_of_Link_with_Torque(0.5, 7, 3, joint_commands_4_pub_);
+    static double result[2];
 
+    double x_error = des_ball_pos_x-ball_x_;
+    double y_error = des_ball_pos_y-ball_y_;
 
-    // Convert vel and position of ball in plate frame:
-    std::string to_frame = std::string("ee_link");
-    std::string from_frame = std::string("world");
+    // x_error > 0 --> beta muss größer werden!
+    result[0] = x_error*15-60*dball_x_;
+    result[1] = y_error*15-80*dball_y_; //y_error*5;
 
-    geometry_msgs::Point ball_pos_in_plate_frame;
-    geometry_msgs::Point ball_vel_in_plate_frame;
+    // u = -K*e
+    return result;
+  }
 
-      try
-      {
-        if (tf_listener_.canTransform(to_frame, from_frame, ros::Time()))
-        {
-          tf::StampedTransform transform;
-          tf_listener_.lookupTransform(to_frame, from_frame, ros::Time(), transform);
-          transformPoint(transform, input_ball_state_msg_.pose.pose.position, ball_pos_in_plate_frame);
-          geometry_msgs::Point input_ball_vel;
-          input_ball_vel.x =  input_ball_state_msg_.twist.twist.linear.x;
-          input_ball_vel.y =  input_ball_state_msg_.twist.twist.linear.y;
-          input_ball_vel.z =  input_ball_state_msg_.twist.twist.linear.z;
-
-          transformVelocity(transform, input_ball_vel, ball_vel_in_plate_frame);
-        }
-      }
-      catch (tf::TransformException ex)
-      {
-        ROS_ERROR("[BallTrackingNode] transformBallState: %s", ex.what());
-      }
-
-    // how to optain control law? --> see scripts/control_plate.py
-    // u = Fw - Rx
-
-    // Plate states x:
-    if(previous_joint_state_msg_)
-    {
-      double alpha_  = previous_joint_state_msg_->position[3]-3.1415898225691254;
-      double dalpha_ = previous_joint_state_msg_->velocity[3];
-      double beta_   = previous_joint_state_msg_->position[4]- 1.5707947869759256;
-      double dbeta_  = previous_joint_state_msg_->velocity[4];
-    }
-
-    // w
-    double des_ball_pos_x = 0.1;
-    double des_ball_pos_y = 0.2;
-
+  double* ControlNode::state_controller(double alpha_, double dalpha_, double beta_, double dbeta_, double ball_x_, double dball_x_, double ball_y_, double dball_y_, double des_ball_pos_x, double des_ball_pos_y)
+  {
+    static double result[2];
     eigen_w_(0,0) = des_ball_pos_x;
     eigen_w_(1,0) = des_ball_pos_y;
-
-    // Ball states:
-    double ball_x_  = ball_pos_in_plate_frame.x;
-    double dball_x_ = ball_vel_in_plate_frame.x;
-    double ball_y_  = ball_pos_in_plate_frame.y;
-    double dball_y_ = ball_vel_in_plate_frame.y;
 
     states_(0,0) = alpha_;
     states_(1,0) = dalpha_;
@@ -249,6 +222,117 @@ namespace kuka
     states_(7,0) = dball_y_;
 
     eigen_u_ = eigen_control_Matrix_F_*eigen_w_ -eigen_control_Matrix_R_*states_;
+    result[0] = eigen_u_(0,0);
+    result[1] = eigen_u_(1,0);
+    return result;
+  }
+
+
+  tf::StampedTransform ControlNode::transformBallState(const std::string& target_frame, const geometry_msgs::PointStamped& state_in,
+                                            geometry_msgs::PointStamped& state_out) const
+  {
+    tf::StampedTransform transform;
+    if (state_in.header.frame_id != target_frame)
+    {
+      try
+      {
+        if (tf_listener_.canTransform(target_frame, state_in.header.frame_id, ros::Time()))
+        {
+          state_out = state_in;
+
+          tf_listener_.lookupTransform(target_frame, state_in.header.frame_id, ros::Time(), transform);
+
+          transformPoint(transform, state_in.point, state_out.point);
+
+          state_out.header.frame_id = target_frame;
+        }
+      }
+      catch (tf::TransformException ex)
+      {
+        ROS_ERROR("[BallTrackingNode: depth] transformBallState: %s", ex.what());
+      }
+    }
+    else
+    {
+      ROS_WARN("cannot transform cause transform from world to world? from to  = same?");
+    }
+    return transform;
+  }
+
+
+  void ControlNode::update()
+  {
+    if(! (input_command13_angle_msg_.x == 1000.0) )
+    {
+      ROS_INFO_ONCE(" You are now in manual Position Control Mode");
+      joints_manual_control();
+    }
+    // now in the position control mode of the ball:
+    else
+    {
+      ROS_INFO_ONCE("You are now in the Position Control Mode of the Ball Position on the plate");
+
+      // Convert vel and position of ball in plate frame:
+      std::string to_frame = std::string("ee_link"); // should be ee_link (actually!) TODO there is something wrong with the transformations
+      std::string from_frame = std::string("world");
+
+      geometry_msgs::PointStamped ball_in_world_pos;
+      ball_in_world_pos.point  = input_ball_state_msg_.pose.pose.position;
+      ball_in_world_pos.header = input_ball_state_msg_.header;
+
+      geometry_msgs::Point ball_in_world_vel;
+      ball_in_world_vel.x =  input_ball_state_msg_.twist.twist.linear.x;
+      ball_in_world_vel.y =  input_ball_state_msg_.twist.twist.linear.y;
+      ball_in_world_vel.z = input_ball_state_msg_.twist.twist.linear.z;
+
+
+      geometry_msgs::PointStamped ball_pos_in_plate_frame;
+      geometry_msgs::Point ball_vel_in_plate_frame;
+
+
+      tf::StampedTransform transform = transformBallState(to_frame, ball_in_world_pos, ball_pos_in_plate_frame);
+      transformVelocity(transform, ball_in_world_vel, ball_vel_in_plate_frame);
+
+      // how to optain control law? --> see scripts/control_plate.py
+      // u = Fw - Rx
+
+      // Plate states x:
+      if(previous_joint_state_msg_)
+      {
+        double beta_  = previous_joint_state_msg_->position[3]-3.1415898225691254; // y axis
+        double dbeta_ = previous_joint_state_msg_->velocity[3];
+        double alpha_   = previous_joint_state_msg_->position[4]- 1.5707947869759256;  // x axis
+        double dalpha_  = previous_joint_state_msg_->velocity[4];
+
+        // w
+        double des_ball_pos_x = 0.1;
+        double des_ball_pos_y = 0.2;
+
+        // Ball states:
+        double ball_x_  = ball_pos_in_plate_frame.point.x;
+        double dball_x_ = ball_vel_in_plate_frame.x;
+        double ball_y_  = ball_pos_in_plate_frame.point.y;
+        double dball_y_ = ball_vel_in_plate_frame.y;
+
+        double *torque =  p_controller(alpha_, dalpha_, beta_, dbeta_, ball_x_, dball_x_, ball_y_, dball_y_, des_ball_pos_x, des_ball_pos_y);
+
+        // joint 4 is controlling the y position of the ball (in world frame!)
+        // joint 5 is controlling the x position of the ball (x in world frame!)
+        std_msgs::Float64 pos_link_data_4y;
+        pos_link_data_4y.data = torque[0];
+        std_msgs::Float64 pos_link_data_5x;
+        pos_link_data_5x.data = torque[1];
+
+        joint_commands_4_pub_.publish(pos_link_data_4y);
+        joint_commands_5_pub_.publish(pos_link_data_5x);
+
+        std::cout<<"x: "<<ball_x_<<" :"<<des_ball_pos_x<< "   y: "<<ball_y_<<" :"<<des_ball_pos_y
+                 <<"dx: "<<dball_x_<<" :"<<0<< "   dy: "<<dball_y_<<" :"<<0
+                 << "  alpha:" <<alpha_ << " beta: "<<beta_<<
+                    "   torque 5x, 4y:  "<<pos_link_data_4y.data <<",  "<<pos_link_data_5x.data<<std::endl;
+      }
+    }
+
   }
 
   void ControlNode::transformPoint(const tf::StampedTransform& transform, const geometry_msgs::Point& point_in, geometry_msgs::Point& point_out) const

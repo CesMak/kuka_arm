@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="move_arm_to" default="zero" />
+
+<node pkg="rostopic" type="rostopic" name="switch_control_mode_to_continous_effort"
+args="pub /kuka/control13_command geometry_msgs/Point --latch --file=$(find kuka_kr5_gazebo)/start_msgs/link13_$(arg move_arm_to)_msg.msg"
+output="screen"/>
+</launch>

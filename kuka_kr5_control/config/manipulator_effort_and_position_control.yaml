@@ -29,7 +29,7 @@ link_6_controller:
 link_4_controller:
   type: effort_controllers/JointEffortController
   joint: joint_a4
-  pid: {p: 1000.00, i: 200.00, d: 200.00}
+ # pid: {p: 1000.00, i: 200.00, d: 200.00}
 
 link_5_controller:
   type: effort_controllers/JointEffortController
