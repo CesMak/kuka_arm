@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<launch>
+<node pkg="rosservice" type="rosservice" name="reset_ball_position" args="call /gazebo/reset_world"/>
+<node pkg="rosservice" type="rosservice" name="update_parameters" args="call /update_parameters"/>
+</launch>

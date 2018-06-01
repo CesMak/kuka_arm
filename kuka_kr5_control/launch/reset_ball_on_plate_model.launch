@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<launch>
+
+  <rosparam file="$(find kuka_kr5_control)/config/controller_node.yaml" command="load"/>
+
+  <!-- reset plate to zero position: -->
+  <node pkg="kuka_kr5_gazebo" type="timed_roslaunch.sh"
+    args="1 kuka_kr5_gazebo move_robot_arm.launch
+      move_arm_to:=zero"
+    name="reset_plate_position" output="screen">
+  </node>
+
+  <!-- reset ball to zero position and update the parameters
+  do rosservice call /gazebo/reset_world -->
+  <node pkg="kuka_kr5_gazebo" type="timed_roslaunch.sh"
+    args="8 kuka_kr5_control reset_ball_state.launch"
+    name="reset_ball_position" output="screen">
+  </node>
+
+  <!-- switch to other control mode and reload pid values! -->
+  <node pkg="kuka_kr5_gazebo" type="timed_roslaunch.sh"
+    args="10 kuka_kr5_gazebo switch_to_continuous_effort_control_mode.launch
+      move_arm_to:=switch"
+    name="after_pid_load" output="screen">
+  </node>
+
+</launch>

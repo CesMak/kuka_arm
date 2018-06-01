@@ -166,6 +166,8 @@ kuka_kr5_control/include/kuka_kr5_control/plate_control_node.hpp
 kuka_kr5_control/launch/manipulator_control.launch
 kuka_kr5_control/launch/manipulator_control.launch
 kuka_kr5_control/launch/manipulator_control.launch
+kuka_kr5_control/launch/reset_ball_on_plate_model.launch
+kuka_kr5_control/launch/reset_ball_state.launch
 kuka_kr5_control/launch/start_control_node.launch
 kuka_kr5_control/launch/start_control_node.launch
 kuka_kr5_control/launch/start_joint_state_controller.launch

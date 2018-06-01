@@ -17,6 +17,8 @@
 #include <Eigen/Eigen>
 #include <math.h>       /* sin, sqrt */
 
+#include <std_srvs/Empty.h>
+
 //#include <std_msgs/String.h>
 //#include <std_msgs/Int32.h>
 
@@ -72,6 +74,9 @@ protected:
   double* state_controller(double alpha_, double dalpha_, double beta_, double dbeta_,
                         double ball_x_, double dball_x_, double ball_y_, double dball_y_, double des_ball_pos_x, double des_ball_pos_y);
 
+  bool updateParameter(std_srvs::Empty::Request&, std_srvs::Empty::Response&);
+
+
   // class members
   tf::TransformListener tf_listener_;
 
@@ -89,6 +94,9 @@ protected:
   double dball_x_ ;
   double ball_y_;
   double dball_y_ ;
+
+  double des_ball_pos_x_;
+  double des_ball_pos_y_;
 
   double integral_x_;
   double integral_y_;
@@ -110,7 +118,10 @@ protected:
 
 
   std::string controller_type_;
-  std::string motors_controller_type_;
+  double p_gain_;
+  double i_gain_;
+  double d_gain_;
+  //std::string motors_controller_type_;
 
    // subscriber
   //ros::Subscriber imu_sub_;
@@ -128,6 +139,9 @@ protected:
   ros::Publisher joint_commands_6_pub_;
 
   // action server
+
+  // Service Server:
+   ros::ServiceServer updateParameters_;
 };
 
 } // end namespace

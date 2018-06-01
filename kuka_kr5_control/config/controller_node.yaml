@@ -1,9 +1,20 @@
 control_constants:
   update_rate: 100.0 # [Hz]   publish motor torques with this frequency. every 10ms = 100Hz
 
-  # controller_type:        # "2D","3D","drive", this value is set through launch file!
-  # motors_controller_type: # "PositionJointInterface", "VelocityJointInterface", "EffortJointInterface" this value is set through launch file.
+  controller_type: pid       # pid, state,
+
+  # desired state:
+  x_des_pos: 0.05
+  y_des_pos: -0.05
+
+  #PID Values for PID Controller_type
+  # values that work: 5, 2, 30 /// 10 5 30
+  p_gain: 5 #with max_contacts at ball = 1 minimum p_gain:2 (when i=d=0)
+  i_gain: 2
+  d_gain: 30
 
   #Control Matrices for Pole Placement:
   R_  : [ 6.21845521e+01, 7.55026005e-04, 0.0, -0.00000000e+00, -0.00000000e+00, -0.00000000e+00 , -3.58060099e+00 , 4.59203044e+00,       -0.00000000e+00, -0.00000000e+00 , 3.07779971e+00 , 3.95866474e-01 ,-3.58060099e+00, -2.02082733e+00, -0.00000000e+00 ,-0.00000000e+00]
   F_  : [0.0, 3.03124099,    3.03124099, 0.0 ]
+
+  # motors_controller_type: # "PositionJointInterface", "VelocityJointInterface", "EffortJointInterface" this value is set through launch file.

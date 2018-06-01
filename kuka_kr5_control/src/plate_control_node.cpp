@@ -18,8 +18,14 @@ namespace kuka
     , integral_y_(0.0)
   {
     //get Params:
-    //controller_type_ = nh.param("control_constants/controller_type", std::string("2D"));
-    //motors_controller_type_ = nh.param("control_constants/motors_controller_type", std::string("VelocityJointInterface"));
+    controller_type_ = nh.param("control_constants/controller_type", std::string("pid"));
+    p_gain_          = nh.param("control_constants/p_gain", 3.0);
+    i_gain_          = nh.param("control_constants/i_gain", 3.0);
+    d_gain_          = nh.param("control_constants/d_gain", 3.0);
+
+    // w:
+    des_ball_pos_x_ = nh.param("control_constants/x_des_pos", 0.05);
+    des_ball_pos_y_ = nh.param("control_constants/y_des_pos", 0.05);
 
     // control Matrix:
     control_Matrix_R_ = nh.param("control_constants/R_", (std::vector<double> )  {1.0, 2.0});
@@ -72,6 +78,9 @@ namespace kuka
    // desired_torques_pub_ = nh.advertise<geometry_msgs::Vector3>("desired_torques", 5);
 
     //action server:
+
+    // services:
+    updateParameters_ = nh.advertiseService("update_parameters", &ControlNode::updateParameter, this);
   }
 
   void ControlNode::set_all_Link_Positions(double pos1, double pos2, double pos3, double pos4, double pos5, double pos6)
@@ -190,7 +199,6 @@ namespace kuka
   double* ControlNode::p_controller(double alpha_, double dalpha_, double beta_, double dbeta_, double ball_x_, double dball_x_, double ball_y_, double dball_y_, double des_ball_pos_x, double des_ball_pos_y)
   {
     static double result[2];
-    double Ki = 0;
     double dt = 0.01;
 
     double x_error = des_ball_pos_x-ball_x_;
@@ -201,8 +209,8 @@ namespace kuka
     integral_y_ += y_error * dt;
 
     // x_error > 0 --> beta muss größer werden!
-    result[0] = 1.6357790106427972+x_error*5-30*dball_x_+integral_x_*Ki;
-    result[1] = -0.7030511730932498+y_error*5-30*dball_y_+integral_y_*Ki;
+    result[0] = x_error*p_gain_-d_gain_*dball_x_+integral_x_*i_gain_;
+    result[1] = y_error*p_gain_-d_gain_*dball_y_+integral_y_*i_gain_;
 
     // u = -K*e
     return result;
@@ -261,6 +269,35 @@ namespace kuka
     return transform;
   }
 
+  bool ControlNode::updateParameter(std_srvs::Empty::Request&, std_srvs::Empty::Response&)
+  {
+    ROS_INFO("Reload PID Parameters");
+    double p_gain, i_gain, d_gain, des_ball_pos_x, des_ball_pos_y;
+    if (ros::param::get("/control_constants/p_gain", p_gain))
+    {
+      p_gain_ = p_gain;
+    }
+    if (ros::param::get("/control_constants/i_gain", i_gain))
+    {
+      i_gain_ = i_gain;
+    }
+    if (ros::param::get("/control_constants/d_gain", d_gain))
+    {
+      d_gain_ = d_gain;
+    }
+    if (ros::param::get("/control_constants/x_des_pos", des_ball_pos_x))
+    {
+      des_ball_pos_x_ = des_ball_pos_x;
+    }
+    if (ros::param::get("/control_constants/y_des_pos", des_ball_pos_y))
+    {
+      des_ball_pos_y_ = des_ball_pos_y;
+    }
+
+    integral_x_=0;
+    integral_y_=0;
+    return true;
+  }
 
   void ControlNode::update()
   {
@@ -306,9 +343,7 @@ namespace kuka
         double alpha_   = previous_joint_state_msg_->position[4]- 1.5707947869759256;  // x axis
         double dalpha_  = previous_joint_state_msg_->velocity[4];
 
-        // w
-        double des_ball_pos_x = 0.05; // you have to add additionally 0.1 but why???
-        double des_ball_pos_y = 0.05;
+        // w -> set with params see constructor
 
         // Ball states:
         double ball_x_  = ball_pos_in_plate_frame.point.x;
@@ -316,19 +351,32 @@ namespace kuka
         double ball_y_  = ball_pos_in_plate_frame.point.y;
         double dball_y_ = ball_vel_in_plate_frame.y;
 
-        double *torque =  p_controller(alpha_, dalpha_, beta_, dbeta_, ball_x_, dball_x_, ball_y_, dball_y_, des_ball_pos_x, des_ball_pos_y);
+        double *torque;
+        if(controller_type_ == "pid")
+        {
+          ROS_INFO_ONCE("pid controller type");
+          torque =  p_controller(alpha_, dalpha_, beta_, dbeta_, ball_x_, dball_x_,
+                                 ball_y_, dball_y_, des_ball_pos_x_, des_ball_pos_y_);
+        }
+
+        else if(controller_type_ == "state")
+        {
+          ROS_INFO_ONCE("state controller type");
+          torque =  state_controller(alpha_, dalpha_, beta_, dbeta_, ball_x_, dball_x_,
+                                 ball_y_, dball_y_, des_ball_pos_x_, des_ball_pos_y_);
+        }
 
         // joint 4 is controlling the y position of the ball (in world frame!)
         // joint 5 is controlling the x position of the ball (x in world frame!)
         std_msgs::Float64 pos_link_data_4y;
-        pos_link_data_4y.data = torque[0];
+        pos_link_data_4y.data = torque[0]+1.6357790106427972; // haltemoment!
         std_msgs::Float64 pos_link_data_5x;
-        pos_link_data_5x.data = torque[1];
+        pos_link_data_5x.data = torque[1]-0.7030511730932498; // haltemoment (to hold plate in zero position)
 
         joint_commands_4_pub_.publish(pos_link_data_4y);
         joint_commands_5_pub_.publish(pos_link_data_5x);
 
-        std::cout<<"x: "<<ball_x_<<" :"<<des_ball_pos_x<< "   y: "<<ball_y_<<" :"<<des_ball_pos_y
+        std::cout<<"x: "<<ball_x_<<" :"<<des_ball_pos_x_<< "   y: "<<ball_y_<<" :"<<des_ball_pos_y_
                  <<"  dx: "<<dball_x_<<" :"<<0<< "  dy: "<<dball_y_<<" :"<<0
                  << "  alpha:" <<alpha_ << " beta: "<<beta_<<
                     "   torque 5x, 4y:  "<<pos_link_data_4y.data <<",  "<<pos_link_data_5x.data<<std::endl;

@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <launch>
-
+  <arg name="suffix_name" default="" />
   <arg name="move_arm_to" default="zero" />
 
-<node pkg="rostopic" type="rostopic" name="pub_freaky13"
+<node pkg="rostopic" type="rostopic" name="pub_freaky13_$(arg suffix_name)"
 args="pub /kuka/control13_command geometry_msgs/Point --latch --file=$(find kuka_kr5_gazebo)/start_msgs/link13_$(arg move_arm_to)_msg.msg"
 output="screen"/>
 
-<node pkg="rostopic" type="rostopic" name="pub_freaky46"
+<node pkg="rostopic" type="rostopic" name="pub_freaky46_$(arg suffix_name)"
 args="pub /kuka/control46_command geometry_msgs/Point --latch --file=$(find kuka_kr5_gazebo)/start_msgs/link46_$(arg move_arm_to)_msg.msg"
 output="screen"/>
 
