@@ -354,7 +354,9 @@ namespace kuka
         double *torque;
         if(controller_type_ == "pid")
         {
-          ROS_INFO_ONCE("pid controller type");
+          // Important note: PID Controller cannot work!
+          // Cause PID Controller only can work if the joints can be controlled directly!
+          ROS_INFO_ONCE("pid controller type --> cannot work! Cause Ball joints cannot be controlled directly!");
           torque =  p_controller(alpha_, dalpha_, beta_, dbeta_, ball_x_, dball_x_,
                                  ball_y_, dball_y_, des_ball_pos_x_, des_ball_pos_y_);
         }

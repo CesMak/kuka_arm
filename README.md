@@ -59,6 +59,21 @@ rostopic pub /kuka/control_command geometry_msg/Point "x: 1.0 y: 0.0   z: 0.0"
 rostopic pub /kuka/control_command geometry_msg/Point "x: 2.0 y: 0.0   z: 0.0"
 ```
 
+# Controller
+
+A PID Controller and a State Space Controller is implemented. To activate the PID or the state space controller please see
+the kuka_kr5_control/controller_node.yaml /controller_type value.
+
+## PID
+Note that PID Control does not work, cause the Ball Joints cannot be influenced directly but indirectly by the plate.
+
+## State Space Controller
+The scripts to get the control Matrix R and the Filter Matrix F can be found in
+kuka_kr5_conrol/scripts
+
+Documentation of the Modelling and a precise description can be found at:
+
+
 # Sources
 For more information about this KUKA KR5 Robot out of the ros_industrial package see:
 
