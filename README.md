@@ -1,9 +1,10 @@
 # Prequisities
-*  ROS Indigo or higher
-* Control packages:
+*  Tested on ROS KINETIC AND INDIGO
+*  Required Packages:
 ```
-sudo apt-get install ros-kinetic-gazebo-ros
+sudo apt-get install ros-kinetic-gazebo-ros-pkg
 sudo apt-get install ros-kinetic-gazebo-ros-control
+sudo apt-get install ros-kinetic-moveit
 ```
 
 # Installation
